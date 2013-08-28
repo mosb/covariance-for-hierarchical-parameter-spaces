@@ -1,0 +1,292 @@
+\documentclass[letterpaper]{article}
+\renewcommand{\subparagraph}{\paragraph}
+\usepackage{theapa}
+\usepackage{times}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{pstricks}
+\usepackage{pst-tree}
+%\usepackage{color}
+%\usepackage{makeidx}  % allows for indexgeneration
+\usepackage{bm}
+\usepackage{graphicx}
+\usepackage{epsfig}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{color}
+\usepackage{array}
+\usepackage{colortbl}
+\usepackage{framed}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{multirow}
+%\usepackage{sgame}
+\usepackage{dsfont}
+\def\sgtextcolor{black}
+\def\sglinecolor{black}
+%\renewcommand{\gamestretch}{2}
+\usepackage{multicol}
+\usepackage{lscape}
+\usepackage{relsize}
+
+% ============== Mike's commands ==============
+\newcommand{\vect}[1]{\underline{\smash{#1}}}
+\renewcommand{\v}[1]{\vect{#1}}
+\newcommand{\reals}{\mathds{R}}
+% ============== ==============
+
+\newcommand{\cut}[1]{}
+\renewcommand{\blue}[1]{{\textcolor{blue}{#1}}}
+%\renewcommand{\blue}[1]{#1}
+\usepackage{rotating}
+
+%% Zapf Chancery font: has lowercase script letters
+\DeclareFontFamily{OT1}{pzc}{}
+\DeclareFontShape{OT1}{pzc}{m}{it}{<-> s * [1.200] pzcmi7t}{}
+\DeclareMathAlphabet{\mathscr}{OT1}{pzc}{m}{it}
+
+\newcommand\transpose{{\textrm{\tiny{\sf{T}}}}}
+\newcommand{\note}[1]{}
+\newcommand{\hlinespace}{~\vspace*{-0.15cm}~\\\hline\\\vspace*{0.15cm}}
+%\newcommand{\hlinespace}{~\vspace*{0.45cm}\\\hline\\~\vspace*{-0.9cm}}
+%\newcommand{\hlinespace}{~\vspace*{0.05cm}\\\hline~\vspace*{0.5cm}}
+
+% comment the next line to turn off notes
+\renewcommand{\note}[1]{~\\\frame{\begin{minipage}[c]{\textwidth}\vspace{2pt}\center{#1}\vspace{2pt}\end{minipage}}\vspace{3pt}\\}
+\newcommand{\lnote}[1]{\note{#1}}
+\newcommand{\emcite}[1]{\citet{#1}}
+\newcommand{\yrcite}[1]{\citeyear{#1}}
+\newcommand{\aunpcite}[1]{\citeR{#1}}
+
+\newcommand{\heavyrule}{\specialrule{\heavyrulewidth}{.4em}{.4em}}
+\newcommand{\lightrule}{\specialrule{.03em}{.4em}{.4em}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% keep figures from going onto a page by themselves
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\textfraction}{0.07}
+\renewcommand{\floatpagefraction}{0.9}
+\renewcommand{\dbltopfraction}{0.9}      % for double-column styles
+\renewcommand{\dblfloatpagefraction}{0.7}   % for double-column styles
+
+
+
+\usepackage{amsmath, amsthm, amssymb}
+\newtheorem{thm}{Theorem}%[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{obs}[thm]{Observation}
+
+%\theoremstyle{definition}
+\newtheorem{define}[thm]{Definition}
+\hyphenation{ge-ne-ral-ize}
+
+
+
+%SAT solvers
+\newcommand{\spear}{\algofont{SPEAR}}
+\newcommand{\saps}{\algofont{SAPS}}
+\newcommand{\satenstein}{\algofont{SATenstein}}
+\newcommand{\tnm}{\algofont{tnm}}
+\newcommand{\minisat}{\algofont{Minisat~2.0}}
+\newcommand{\lkh}{\algofont{LK-H}}
+\newcommand{\concorde}{\algofont{Concorde}}
+\newcommand{\cryptominisat}{\algofont{CryptoMinisat}}
+\newcommand{\satelite}{\algofont{SATElite}}
+
+%MIP solvers
+\newcommand{\lpsolve}{\algofont{lp\_solve}}
+\newcommand{\scip}{\algofont{SCIP}}
+\newcommand{\gurobi}{\algofont{Gu\-ro\-bi}}
+\newcommand{\cplex}{\algofont{CPLEX}}
+\newcommand{\ibmcplex}{\algofont{IBM ILOG CPLEX}}
+
+\newcommand{\SATzilla}{\texttt{SATzilla}}
+\newcommand{\SATzillaHHM}{\texttt{SATzilla$\_$HHM}}
+\newcommand{\SATzillaNew}{\texttt{SATzilla07}}
+\newcommand{\SATzillap}{\texttt{SATzilla07$^+$}}
+\newcommand{\SATzillas}{\texttt{SATzilla07$^*$}}
+
+\newcommand{\random}{\texttt{RANDOM}}
+\newcommand{\industrial}{\texttt{INDUSTRIAL}}
+\newcommand{\crafted}{\texttt{CRAFTED}}
+\newcommand{\handmade}{\texttt{HANDMADE}}
+\newcommand{\all}{\texttt{ALL}}
+
+\newcommand{\Var}{\ensuremath\text{Var}}
+\newcommand{\indicator}{\ensuremath\mathds{I}}
+
+\newcommand{\fhspace}{\vspace*{0.2cm}}
+\newcommand{\newsec}{\hspace{0cm}}
+
+% replaces tabular; takes same arguments. use \midrule for a rule, no vertical rules, and eg \cmidrule(l){2-3} as needed with \multicolumn
+\newenvironment{ktabular}[1]{\sffamily\small\begin{center}\begin{tabular}[c]{#1}\toprule}{\bottomrule \end{tabular}\end{center}\normalsize\rmfamily\vspace{-5pt}}
+\newcommand{\tbold}[1]{\textbf{#1}}
+\newcommand{\interrowspace}{.6em}
+
+
+\begin{document}
+
+\title{A Kernel for Hierarchical Parameter Spaces}
+
+%\author{Frank Hutter}
+
+%\address{
+%     Department of Computer Science\\
+%     University of British Columbia \\
+%     201-2366 Main Mall, BC V6T 1Z4, CANADA\\
+%     {\texttt{hutter@cs.ubc.ca}}
+%}
+
+\maketitle
+%\begin{abstract}
+%\noindent{}We define kernels for mixed continuous/discrete spaces and conditional spaces and show that they are positive definite.
+%\end{abstract}
+
+
+Consider a $D$-dimensional input space $\mathcal{X}$ with an associated DAG structure $\mathcal{D}$ over the dimensions $1,\dots,D$, where each input dimension 
+%$i$ 
+is only active under some instantiations of its ancestor dimensions in $\mathcal{D}$.
+%if all its parent dimensions $P_i$ are active themselves and each parent $p\in P_i$ takes one of the values in the finite set $V_{i,p}$. 
+We specify a kernel for $\mathcal{X}$ as a product over individual kernels for each dimension $i$. Each of these individual kernels is specified using an isometric embedding into a Euclidean space ($\reals^2$ for continuous-valued parameters, and $\reals^m$ for categorical-valued parameters with $m$ choices). We restrict dimensions that are parents in $\mathcal{D}$ to be categorical-valued. Leaf dimensions in $\mathcal{D}$ can be continuous-valued or categorical-valued.
+%In contrast to the previous section, each of the individual kernels does not only depend on one dimension $i$, but on the whole space $\mathcal{X}$. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Continuous Dimensions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Let's first consider a continuous-valued input dimension $i$ with upper and lower bounds $U_i$ and $L_i$, respectively. We define a delta function $\delta_i$ that maps complete inputs $\v{x} \in \mathcal{X}$ to true if dimension $i$ is active in the context of the instantiation of $i$'s ancestors in $\v{x}$, and to false otherwise. Let $d{_E}$ denote the Euclidean distance metric in $\reals^{2}$. We define a metric $d{_i}^{(cont)}$ on $\mathcal{X}$ and an isometric embedding $f{_i}^{(cont)}$ of $(\mathcal{X}, d{_i}^{(cont)})$ into $(\reals^{2},d_E)$:
+\begin{eqnarray}
+\nonumber{}d{_i}^{(cont)}(\v{x}, \v{x}') & = & \left\{\begin{array}{ll}
+\nonumber{} 0 & \textrm{ if } \delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{false}\\
+\nonumber{} w_i & \textrm{ if } \delta_i(\v{x}) \neq \delta_i(\v{x}')\\
+\nonumber{} w_i \sqrt{2} \sqrt{1 - \cos(\pi \frac{x_i-x_i'}{U_i-L_i})} & \textrm{ otherwise. }\end{array}\right\}
+\end{eqnarray}
+
+\begin{eqnarray}
+\nonumber{}f{_i}^{(cont)}(\v{x}) & = & \left\{\begin{array}{ll}
+[0,0]^\transpose & \textrm{ if } \delta_i(\v{x}) = \textrm{ false }\\
+\nonumber{} w_i [\sin{\pi\frac{x_i}{U_i-L_i}}, \cos{\pi\frac{x_i}{U_i-L_i}}]^\transpose & \textrm{ otherwise.}\end{array}\right\}
+\end{eqnarray}
+
+\begin{prop}Embedding $f{_i}^{(cont)}$ is an isometric embedding of $(\mathcal{X}, d{_i}^{(cont)})$ into $(\reals^2, d_E)$.
+\label{prop:f_d_cont_isometric}
+\begin{proof}
+Consider two inputs $\v{x},\v{x}' \in \mathcal{X}$. We need to show that $d{_i}^{(cont)}(\v{x},\v{x}') = d_E(f{_i}^{(cont)}(\v{x}),f{_i}^{(cont)}(\v{x}'))$.
+We use the abbreviation $\alpha = \pi\frac{x_i}{U_i-L_i}$ and $\alpha' = \pi\frac{x'_i}{U_i-L_i}$ and consider the following three possible cases of dimension $i$ being active or inactive in $\v{x}$ and $\v{x}'$.
+
+~\\\noindent{}\textbf{Case 1}: $\delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{false}$.
+In this case, we trivially have 
+\[d_E(f{_i}^{(cont)}(\v{x}),f{_i}^{(cont)}(\v{x}')) = d_E([0,0]^\transpose, [0,0]^\transpose) = 0 = d{_i}^{(cont)}(\v{x},\v{x}').\]
+
+~\\\noindent{}\textbf{Case 2}: $\delta_i(\v{x}) \neq \delta_i(\v{x}')$. In this case, we have
+\[d_E(f{_i}^{(cont)}(\v{x}),f{_i}^{(cont)}(\v{x}')) = d_E([\sin{\alpha}, \cos{\alpha}]^\transpose, [0,0]^\transpose) = \sqrt{w_i^2 (\sin^2{\alpha} + \cos^2{\alpha})} = w_i = d_i(\v{x},\v{x}'),\]
+and symmetrically for $d_E([0,0]^\transpose, [\sin{\alpha}, \cos{\alpha}]^\transpose)$.
+
+~\\\noindent{}\textbf{Case 3}: $\delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{true}$. We have:
+\begin{eqnarray}
+\nonumber{}d_E(f{_i}^{(cont)}(\v{x}),f{_i}^{(cont)}(\v{x}')) & = & d_E(w_i [\sin{\alpha}, \cos{\alpha}]^\transpose, w_i [\sin{\alpha'}, \cos{\alpha'}]^\transpose)\\ 
+\nonumber{}& = & w_i \sqrt{(\sin{\alpha}-\sin{\alpha'})^2 (\cos{\alpha}-\cos{\alpha'})^2}\\
+\nonumber{}& = & w_i \sqrt{\sin^2{\alpha} -2 \sin{\alpha}\sin{\alpha'} + \sin^2{\alpha'}  + \cos^2{\alpha} -2 \cos{\alpha}\cos{\alpha'} + \cos^2{\alpha'} }\\
+\nonumber{}& = & w_i \sqrt{(\sin^2{\alpha}+\cos^2{\alpha})   +  (\sin^2{\alpha'}+\cos^2{\alpha'})   -2 (\sin{\alpha}\sin{\alpha'} + \cos{\alpha}\cos{\alpha'})}\\
+\label{eqn:simplified}& = & w_i \sqrt{ 1+1-2 \cos(\alpha-\alpha')}\\
+\nonumber{}& = & w_i \sqrt{2} \sqrt{1 - \cos(\pi \frac{x_i-x_i'}{U_i-L_i})} = d_i(\v{x}, \v{x}'),
+\end{eqnarray}
+where (\ref{eqn:simplified}) follows from the previous line by using the identity 
+\[\cos{(a-b)} = \cos{a}\cos{b} + \sin{a}\sin{b}.\]
+\end{proof}
+\end{prop}
+
+
+Define $\kappa\colon \reals^+ \to \reals$ as a semi-positive definite function over Euclidean space. By this, we mean that $K \in \reals^{N\times N}$, defined by 
+\begin{equation}
+ K_{m, n} = \kappa\bigl(d_E(\v{y}_m, \v{y}_n)\bigr),\quad \text{for }
+\v{y}_m, \v{y}_n \in \reals^P,\quad m, n = 1, \ldots, N, 
+\end{equation}
+is positive semi-definite. A popular example of such a $\kappa$ is the exponentiated quadratic, for which $\kappa(\delta) = \sigma^2 \exp(-\frac{1}{2} \frac{\delta^2}{\lambda^2})$; another popular choice is the rational quadratic, for which $\kappa(\delta) = \sigma^2 (1+\frac{1}{2\alpha} \frac{\delta^2}{\lambda^2})^{-\alpha}$.
+
+\begin{prop}
+  $\kappa\bigl(d{_i}^{(cont)}(\cdot,\cdot)\bigr)$ is a positive semi-definite covariance function over input space $\mathcal{X}$. 
+\label{prop:cont_psd_proof}
+\begin{proof}
+We require that $K \in \reals^{N\times N}$ defined by
+\begin{align*}
+ K_{m, n} & = \kappa\bigl(d{_i}^{(cont)}(\v{x}_m,\v{x}_n)\bigr)
+,\quad \text{for }
+\v{x}_m, \v{x}_n \in \mathcal{X},\quad m, n = 1, \ldots, N, 
+\\
+\intertext{is positive semi-definite. Now, from above,}
+K_{m, n} & = \kappa\Bigl(d_E(f{_i}^{(cont)}\bigl(\v{x}_m), f{_i}^{(cont)}(\v{x}_n)\bigr)\Bigr) \\
+& = \kappa\bigl(d_E(\v{y}_m, \v{y}_n)\bigr)
+\end{align*}
+where $\v{y}_m = f{_i}^{(cont)}\bigl(\v{x}_m)$ and similar for $\v{x}_m$. Then, by assumption that $\kappa$ is semi-positive definite function over Euclidean space, $K$ is positive semi-definite. 
+\end{proof}
+\end{prop}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Categorical Dimensions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Next, let's consider a categorical-valued input dimension $i$ with $m_i$ possible values $V_i = \{v_{i,1}, \dots, v_{i,m_i}\}$. As in the continuous case, we define a delta function $\delta_i$ that maps complete inputs $\v{x} \in \mathcal{X}$ to true if dimension $i$ is active in the context of the instantiation of $i$'s ancestors in $\v{x}$, and to false otherwise. Let $d{_E}^{m_i}$ denote the Euclidean distance metric in $\reals^{m_i}$. We define a metric $d{_i}^{(cat)}$ on $\mathcal{X}$ and an isometric embedding of $(\mathcal{X}, d{_i}^{(cat)})$ into $(\reals^{m_i},d{_E}^{m_i})$:
+\begin{eqnarray}
+\nonumber{}d{_i}^{(cat)}(\v{x}, \v{x}') & = & \left\{\begin{array}{ll}
+\nonumber{} 0 & \textrm{ if } \delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{false}\\
+\nonumber{} w_i & \textrm{ if } \delta_i(\v{x}) \neq \delta_i(\v{x}')\\
+\nonumber{} w_i \sqrt{2} \indicator_{x_i \neq x_i'} & \textrm{ otherwise. }\end{array}\right\}
+\end{eqnarray}
+
+\begin{eqnarray}
+\nonumber{}f{_i}^{(cat)}(\v{x}) & = & \left\{\begin{array}{ll}
+\v{0} \in \reals^{m_i} & \textrm{ if } \delta_i(\v{x}) = \textrm{ false }\\
+\nonumber{} w_i \v{e_j} & \delta_i(\v{x}) = \textrm{ true and } x_i = v_{i,j},
+\end{array}\right\}
+\end{eqnarray}
+\noindent{}where $\v{e_j} \in \reals^{m_i}$ is zero in all dimensions except $j$, where it it $1$.
+
+\begin{prop}Embedding $f{_i}^{(cat)}$ is an isometric embedding of $(\mathcal{X}, d{_i}^{(cat)})$ into $(\reals^{m_i},d{_E}^{m_i})$.
+\label{prop:f_d_cat_isometric}
+\begin{proof}
+Consider two inputs $\v{x},\v{x}' \in \mathcal{X}$. As in the proof of Proposition \ref{prop:f_d_cont_isometric}, we need to show that $d{_i}^{(cat)}(\v{x},\v{x}') = d{_E}^{m_i}(f{_i}^{(cat)}(\v{x}),f{_i}^{(cat)}(\v{x}'))$ and consider the following cases.
+
+~\\\noindent{}\textbf{Case 1}: $\delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{false}$.
+In this case, we trivially have 
+\[d{_E}^{m_i}(f{_i}^{(cont)}(\v{x}),f{_i}^{(cont)}(\v{x}')) = d{_E}^{m_i}(\v{0}, \v{0}) = 0 = d{_i}^{(cont)}(\v{x},\v{x}').\]
+
+~\\\noindent{}\textbf{Case 2}: $\delta_i(\v{x}) \neq \delta_i(\v{x}')$. In this case, we have
+\[d{_E}^{m_i}(f{_i}^{(cat)}(\v{x}),f{_i}^{(cat)}(\v{x}')) = d{_E}^{m_i}(w_i \v{e_j}, \v{0}) = w_i = d_i(\v{x},\v{x}'),\]
+and symmetrically for $d_E(\v{0}, w_i \v{e_j})$.
+
+~\\\noindent{}\textbf{Case 3}: $\delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{true}$. 
+If $x_i=x_i'=v_{i,j}$, we have 
+\begin{eqnarray}
+\nonumber{}d{_E}^{m_i}(f{_i}^{(cat)}(\v{x}),f{_i}^{(cat)}(\v{x}')) & = & d{_E}^{m_i}(w_i \v{e_j}, w_i \v{e_j}) = 0 = d{_i}^{(cat)}(\v{x}, \v{x}')
+\end{eqnarray}
+
+\noindent{}If $x_i=v_{i,j} \neq v_{i,j'} = x_i'=$, we have 
+\begin{eqnarray} 
+\nonumber{}d_E(f{_i}^{(cat)}(\v{x}),f{_i}^{(cat)}(\v{x}')) & = & d{_E}^{m_i}(w_i \v{e_j}, w_i \v{e_{j'}}) = w_i \sqrt{2} = d{_i}^{(cat)}(\v{x}, \v{x}')
+\end{eqnarray}
+\end{proof}
+\end{prop}
+
+\begin{prop}
+  $\kappa\bigl(d{_i}^{(cat)}(\cdot,\cdot)\bigr)$ is a positive semi-definite covariance function over input space $\mathcal{X}$. 
+\begin{proof}
+ This is a trivial extension to the proof of Proposition \ref{prop:cont_psd_proof}.
+\end{proof}
+\end{prop}
+
+\note{FH: missing - the trivial part where we multiply together all the kernels to define a PSD kernel for the whole space.}
+
+%\bibliographystyle{theapa}
+%\renewcommand{\baselinestretch}{0.97}
+%\footnotesize{\bibliography{abbrev,frankbib}}
+
+
+\end{document}
+
