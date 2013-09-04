@@ -155,31 +155,33 @@ Associated with $\sX$, there is a DAG structure $\sD$, whose vertices are the di
 where $\text{anc}_i$ are the ancestor vertices of $i$ in $\sD$, such that $\delta_i(\v{x})$ is true only for appropriate values of those entries of $\v{x}$ corresponding to ancestors of $i$ in $\sD$. We say $i$ is active for $\v{x}$ iff $\delta_i(\v{x})$.
 
 %if all its parent dimensions $P_i$ are active themselves and each parent $p\in P_i$ takes one of the values in the finite set $V_{i,p}$. 
-Our aim is to specify a kernel for $g$, that is a positive semi-definite function  $k\colon \sX \times \sX \mapsto \reals$. We will first specify individual kernels over each input dimension, that is, positive semi-definite functions $k_i\colon [\mathcal{B} \times \sX_i] \times [\mathcal{B} \times \sX_i] \mapsto \reals$. $k$ can then be taken as either a sum,
+Our aim is to specify a kernel for $g$, that is a positive semi-definite function  $k\colon \sX \times \sX \mapsto \reals$. We will first specify an individual kernel for each input dimension, that is, a positive semi-definite function $k_i\colon \sX \times \sX \mapsto \reals$. $k$ can then be taken as either a sum,
 \begin{equation}
- k(\v{x}, \v{x}') = \sum_{i=1}^D k_i\bigl([\delta_i(\v{x}), x_i], [\delta_i(\v{x}'), x_i']\bigr),
+ k(\v{x}, \v{x}') = \sum_{i=1}^D k_i(\v{x},\v{x}'),
 \end{equation}
 or product,
 \begin{equation}
- k(\v{x}, \v{x}') = \prod_{i=1}^D k_i\bigl([\delta_i(\v{x}), x_i], [\delta_i(\v{x}'), x_i']\bigr),
+ k(\v{x}, \v{x}') = \prod_{i=1}^D k_i(\v{x},\v{x}'),
 \end{equation}
-of these individual kernels. Each $k_i$ will be specified by mapping $[\mathcal{B} \times \sX_i]$ into a Euclidean space ($\reals^2$ for continuous-valued parameters, and $\reals^m$ for categorical-valued parameters with $m$ choices). 
+of these individual kernels. Note that each individual kernel will depend on an  input vector $\v{x}$ only through dependence on both $x_i$ and $\delta_i(\v{x})$,
+\begin{equation}
+  k_i(\v{x},\v{x}') = \tilde{k}_i\bigl(x_i,\delta_i(\v{x}),x_i', \delta_i(\v{x}'). \bigr)
+\end{equation}
+That is, $x_j$ for $j\neq i$ will influence $k_i(\v{x},\v{x}')$ only if $j \in \text{anc}_i$, and only by affecting whether $i$ is active.
 
-Define $\kappa\colon \reals^+ \to \reals$ as a semi-positive definite function over Euclidean space. By this, we mean that $K \in \reals^{N\times N}$, defined by 
+
+
+Each $k_i$ will be specified by a mapping $f_i$ from
+$\sX$ 
+to a Euclidean space ($\reals^2$ for continuous-valued parameters, and $\reals^m$ for categorical-valued parameters with $m$ choices). Let $d{_E}$ denote the Euclidean distance metric. 
+
+Define $\kappa\colon \reals^+ \to \reals$ as a semi-positive definite function over Euclidean space. By the latter, we mean that $K \in \reals^{N\times N}$, defined by 
 \begin{equation}
  K_{m, n} = \kappa\bigl(d_E(\v{y}_m, \v{y}_n)\bigr),\quad \text{for }
 \v{y}_m, \v{y}_n \in \reals^P,\quad m, n = 1, \ldots, N, 
 \end{equation}
 is positive semi-definite. A popular example of such a $\kappa$ is the exponentiated quadratic, for which $\kappa(\delta) = \sigma^2 \exp(-\frac{1}{2} \frac{\delta^2}{\lambda^2})$; another popular choice is the rational quadratic, for which $\kappa(\delta) = \sigma^2 (1+\frac{1}{2\alpha} \frac{\delta^2}{\lambda^2})^{-\alpha}$.
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Continuous Dimensions}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-Let's first consider a continuous-valued input dimension $i$ with , respectively. 
-
-Let $d{_E}$ denote the Euclidean distance metric in $\reals^{2}$. We define a metric $d{_i}^{(cont)}$ on $\sX$ and an isometric embedding $f{_i}^{(cont)}$ of $(\sX, d{_i}^{(cont)})$ into $(\reals^{2},d_E)$:
 
 \begin{prop}
   $\kappa\bigl(d{_i}^{(cont)}(\cdot,\cdot)\bigr)$ is a positive semi-definite covariance function over input space $\sX$. 
@@ -198,6 +200,16 @@ K_{m, n} & = \kappa\Bigl(d_E(f{_i}^{(cont)}\bigl(\v{x}_m), f{_i}^{(cont)}(\v{x}_
 where $\v{y}_m = f{_i}^{(cont)}\bigl(\v{x}_m)$ and similar for $\v{x}_m$. Then, by assumption that $\kappa$ is a positive semi-definite function over Euclidean space, $K$ is positive semi-definite. 
 \end{proof}
 \end{prop}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Continuous Dimensions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Let's first consider a continuous-valued input dimension $i$ with , respectively. 
+
+We define a metric $d{_i}^{(cont)}$ on $\sX$ and an isometric embedding $f{_i}^{(cont)}$ of $(\sX, d{_i}^{(cont)})$ into $(\reals^{2},d_E)$:
+
 
 
 \begin{eqnarray}
