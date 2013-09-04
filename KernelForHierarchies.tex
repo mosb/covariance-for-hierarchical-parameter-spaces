@@ -33,6 +33,8 @@
 \newcommand{\vect}[1]{\underline{\smash{#1}}}
 \renewcommand{\v}[1]{\vect{#1}}
 \newcommand{\reals}{\mathds{R}}
+\newcommand{\sX}{\mathcal{X}}
+\newcommand{\sD}{\mathcal{D}}
 % ============== ==============
 
 \newcommand{\cut}[1]{}
@@ -131,34 +133,73 @@
 
 \title{A Kernel for Hierarchical Parameter Spaces}
 
-%\author{Frank Hutter}
-
-%\address{
+\author{Frank Hutter and Michael A. Osborne\\
+{\tt hutter@cs.ubc.ca} and {\tt mosb@robots.ox.ac.uk}
 %     Department of Computer Science\\
 %     University of British Columbia \\
 %     201-2366 Main Mall, BC V6T 1Z4, CANADA\\
 %     {\texttt{hutter@cs.ubc.ca}}
-%}
+}
 
 \maketitle
-%\begin{abstract}
-%\noindent{}We define kernels for mixed continuous/discrete spaces and conditional spaces and show that they are positive definite.
-%\end{abstract}
+\begin{abstract}
+\noindent{}We define kernels for mixed continuous/discrete spaces and conditional spaces and show that they are positive definite.
+\end{abstract}
 
+We aim to do inference about some function $g$ with domain (input space) $\sX$. $\sX = \prod_{i=1}^D \sX_i$ is a $D$-dimensional input space, where each individual dimension is either real or categorical, that is, $\sX_i$ is either $[L_i, U_i] \subset \reals$ (with lower and upper bounds $L_i$ and $U_i$, respectively) or $\{1,\,\ldots,\,m_i\}$. 
 
-Consider a $D$-dimensional input space $\mathcal{X}$ with an associated DAG structure $\mathcal{D}$ over the dimensions $1,\dots,D$, where each input dimension 
-%$i$ 
-is only active under some instantiations of its ancestor dimensions in $\mathcal{D}$.
+Associated with $\sX$, there is a DAG structure $\sD$, whose vertices are the dimensions $\{1,\,\ldots,\,D\}$. $\sX$ will be restricted by $\sD$: if vertex $i$ has children under $\sD$, $\sX_i$ must be categorical. $\sD$ is also used to specify whether each input is \emph{active}: that is, relevant to inference about $g$. In particular, we assume each input dimension is only active under some instantiations of its ancestor dimensions in $\sD$. More precisely, we define $D$ functions $\delta_i\colon \sX\mapsto \mathcal{B}$, for $i \in \{1,\,\ldots,\,D\}$, and where $\mathcal{B} = \{\text{true}, \text{false}\}$. We take 
+\begin{equation}
+ \delta_i(\v{x}) = \delta_i\bigl(\v{x}(\text{anc}_i)\bigr),
+\end{equation}
+where $\text{anc}_i$ are the ancestor vertices of $i$ in $\sD$, such that $\delta_i(\v{x})$ is true only for appropriate values of those entries of $\v{x}$ corresponding to ancestors of $i$ in $\sD$. We say $i$ is active for $\v{x}$ iff $\delta_i(\v{x})$.
+
 %if all its parent dimensions $P_i$ are active themselves and each parent $p\in P_i$ takes one of the values in the finite set $V_{i,p}$. 
-We specify a kernel for $\mathcal{X}$ as a product over individual kernels for each dimension $i$. Each of these individual kernels is specified using an isometric embedding into a Euclidean space ($\reals^2$ for continuous-valued parameters, and $\reals^m$ for categorical-valued parameters with $m$ choices). We restrict dimensions that are parents in $\mathcal{D}$ to be categorical-valued. Leaf dimensions in $\mathcal{D}$ can be continuous-valued or categorical-valued.
-%In contrast to the previous section, each of the individual kernels does not only depend on one dimension $i$, but on the whole space $\mathcal{X}$. 
+Our aim is to specify a kernel for $g$, that is a positive semi-definite function  $k\colon \sX \times \sX \mapsto \reals$. We will first specify individual kernels over each input dimension, that is, positive semi-definite functions $k_i\colon [\mathcal{B} \times \sX_i] \times [\mathcal{B} \times \sX_i] \mapsto \reals$. $k$ can then be taken as either a sum,
+\begin{equation}
+ k(\v{x}, \v{x}') = \sum_{i=1}^D k_i\bigl([\delta_i(\v{x}), x_i], [\delta_i(\v{x}'), x_i']\bigr),
+\end{equation}
+or product,
+\begin{equation}
+ k(\v{x}, \v{x}') = \prod_{i=1}^D k_i\bigl([\delta_i(\v{x}), x_i], [\delta_i(\v{x}'), x_i']\bigr),
+\end{equation}
+of these individual kernels. Each $k_i$ will be specified by mapping $[\mathcal{B} \times \sX_i]$ into a Euclidean space ($\reals^2$ for continuous-valued parameters, and $\reals^m$ for categorical-valued parameters with $m$ choices). 
+
+Define $\kappa\colon \reals^+ \to \reals$ as a semi-positive definite function over Euclidean space. By this, we mean that $K \in \reals^{N\times N}$, defined by 
+\begin{equation}
+ K_{m, n} = \kappa\bigl(d_E(\v{y}_m, \v{y}_n)\bigr),\quad \text{for }
+\v{y}_m, \v{y}_n \in \reals^P,\quad m, n = 1, \ldots, N, 
+\end{equation}
+is positive semi-definite. A popular example of such a $\kappa$ is the exponentiated quadratic, for which $\kappa(\delta) = \sigma^2 \exp(-\frac{1}{2} \frac{\delta^2}{\lambda^2})$; another popular choice is the rational quadratic, for which $\kappa(\delta) = \sigma^2 (1+\frac{1}{2\alpha} \frac{\delta^2}{\lambda^2})^{-\alpha}$.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Continuous Dimensions}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Let's first consider a continuous-valued input dimension $i$ with upper and lower bounds $U_i$ and $L_i$, respectively. We define a delta function $\delta_i$ that maps complete inputs $\v{x} \in \mathcal{X}$ to true if dimension $i$ is active in the context of the instantiation of $i$'s ancestors in $\v{x}$, and to false otherwise. Let $d{_E}$ denote the Euclidean distance metric in $\reals^{2}$. We define a metric $d{_i}^{(cont)}$ on $\mathcal{X}$ and an isometric embedding $f{_i}^{(cont)}$ of $(\mathcal{X}, d{_i}^{(cont)})$ into $(\reals^{2},d_E)$:
+Let's first consider a continuous-valued input dimension $i$ with , respectively. 
+
+Let $d{_E}$ denote the Euclidean distance metric in $\reals^{2}$. We define a metric $d{_i}^{(cont)}$ on $\sX$ and an isometric embedding $f{_i}^{(cont)}$ of $(\sX, d{_i}^{(cont)})$ into $(\reals^{2},d_E)$:
+
+\begin{prop}
+  $\kappa\bigl(d{_i}^{(cont)}(\cdot,\cdot)\bigr)$ is a positive semi-definite covariance function over input space $\sX$. 
+\label{prop:cont_psd_proof}
+\begin{proof}
+We require that $K \in \reals^{N\times N}$ defined by
+\begin{align*}
+ K_{m, n} & = \kappa\bigl(d{_i}^{(cont)}(\v{x}_m,\v{x}_n)\bigr)
+,\quad \text{for }
+\v{x}_m, \v{x}_n \in \sX,\quad m, n = 1, \ldots, N, 
+\\
+\intertext{is positive semi-definite. Now, from above,}
+K_{m, n} & = \kappa\Bigl(d_E(f{_i}^{(cont)}\bigl(\v{x}_m), f{_i}^{(cont)}(\v{x}_n)\bigr)\Bigr) \\
+& = \kappa\bigl(d_E(\v{y}_m, \v{y}_n)\bigr)
+\end{align*}
+where $\v{y}_m = f{_i}^{(cont)}\bigl(\v{x}_m)$ and similar for $\v{x}_m$. Then, by assumption that $\kappa$ is a positive semi-definite function over Euclidean space, $K$ is positive semi-definite. 
+\end{proof}
+\end{prop}
+
+
 \begin{eqnarray}
 \nonumber{}d{_i}^{(cont)}(\v{x}, \v{x}') & = & \left\{\begin{array}{ll}
 \nonumber{} 0 & \textrm{ if } \delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{false}\\
@@ -172,10 +213,10 @@ Let's first consider a continuous-valued input dimension $i$ with upper and lowe
 \nonumber{} w_i [\sin{\pi\frac{x_i}{U_i-L_i}}, \cos{\pi\frac{x_i}{U_i-L_i}}]^\transpose & \textrm{ otherwise.}\end{array}\right\}
 \end{eqnarray}
 
-\begin{prop}Embedding $f{_i}^{(cont)}$ is an isometric embedding of $(\mathcal{X}, d{_i}^{(cont)})$ into $(\reals^2, d_E)$.
+\begin{prop}Embedding $f{_i}^{(cont)}$ is an isometric embedding of $(\sX, d{_i}^{(cont)})$ into $(\reals^2, d_E)$.
 \label{prop:f_d_cont_isometric}
 \begin{proof}
-Consider two inputs $\v{x},\v{x}' \in \mathcal{X}$. We need to show that $d{_i}^{(cont)}(\v{x},\v{x}') = d_E(f{_i}^{(cont)}(\v{x}),f{_i}^{(cont)}(\v{x}'))$.
+Consider two inputs $\v{x},\v{x}' \in \sX$. We need to show that $d{_i}^{(cont)}(\v{x},\v{x}') = d_E(f{_i}^{(cont)}(\v{x}),f{_i}^{(cont)}(\v{x}'))$.
 We use the abbreviation $\alpha = \pi\frac{x_i}{U_i-L_i}$ and $\alpha' = \pi\frac{x'_i}{U_i-L_i}$ and consider the following three possible cases of dimension $i$ being active or inactive in $\v{x}$ and $\v{x}'$.
 
 ~\\\noindent{}\textbf{Case 1}: $\delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{false}$.
@@ -201,30 +242,7 @@ where (\ref{eqn:simplified}) follows from the previous line by using the identit
 \end{prop}
 
 
-Define $\kappa\colon \reals^+ \to \reals$ as a semi-positive definite function over Euclidean space. By this, we mean that $K \in \reals^{N\times N}$, defined by 
-\begin{equation}
- K_{m, n} = \kappa\bigl(d_E(\v{y}_m, \v{y}_n)\bigr),\quad \text{for }
-\v{y}_m, \v{y}_n \in \reals^P,\quad m, n = 1, \ldots, N, 
-\end{equation}
-is positive semi-definite. A popular example of such a $\kappa$ is the exponentiated quadratic, for which $\kappa(\delta) = \sigma^2 \exp(-\frac{1}{2} \frac{\delta^2}{\lambda^2})$; another popular choice is the rational quadratic, for which $\kappa(\delta) = \sigma^2 (1+\frac{1}{2\alpha} \frac{\delta^2}{\lambda^2})^{-\alpha}$.
 
-\begin{prop}
-  $\kappa\bigl(d{_i}^{(cont)}(\cdot,\cdot)\bigr)$ is a positive semi-definite covariance function over input space $\mathcal{X}$. 
-\label{prop:cont_psd_proof}
-\begin{proof}
-We require that $K \in \reals^{N\times N}$ defined by
-\begin{align*}
- K_{m, n} & = \kappa\bigl(d{_i}^{(cont)}(\v{x}_m,\v{x}_n)\bigr)
-,\quad \text{for }
-\v{x}_m, \v{x}_n \in \mathcal{X},\quad m, n = 1, \ldots, N, 
-\\
-\intertext{is positive semi-definite. Now, from above,}
-K_{m, n} & = \kappa\Bigl(d_E(f{_i}^{(cont)}\bigl(\v{x}_m), f{_i}^{(cont)}(\v{x}_n)\bigr)\Bigr) \\
-& = \kappa\bigl(d_E(\v{y}_m, \v{y}_n)\bigr)
-\end{align*}
-where $\v{y}_m = f{_i}^{(cont)}\bigl(\v{x}_m)$ and similar for $\v{x}_m$. Then, by assumption that $\kappa$ is semi-positive definite function over Euclidean space, $K$ is positive semi-definite. 
-\end{proof}
-\end{prop}
 
 
 
@@ -232,7 +250,7 @@ where $\v{y}_m = f{_i}^{(cont)}\bigl(\v{x}_m)$ and similar for $\v{x}_m$. Then, 
 \section{Categorical Dimensions}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Next, let's consider a categorical-valued input dimension $i$ with $m_i$ possible values $V_i = \{v_{i,1}, \dots, v_{i,m_i}\}$. As in the continuous case, we define a delta function $\delta_i$ that maps complete inputs $\v{x} \in \mathcal{X}$ to true if dimension $i$ is active in the context of the instantiation of $i$'s ancestors in $\v{x}$, and to false otherwise. Let $d{_E}^{m_i}$ denote the Euclidean distance metric in $\reals^{m_i}$. We define a metric $d{_i}^{(cat)}$ on $\mathcal{X}$ and an isometric embedding of $(\mathcal{X}, d{_i}^{(cat)})$ into $(\reals^{m_i},d{_E}^{m_i})$:
+Next, let's consider a categorical-valued input dimension $i$ with $m_i$ possible values $V_i = \{v_{i,1}, \dots, v_{i,m_i}\}$. As in the continuous case, we define a delta function $\delta_i$ that maps complete inputs $\v{x} \in \sX$ to true if dimension $i$ is active in the context of the instantiation of $i$'s ancestors in $\v{x}$, and to false otherwise. Let $d{_E}^{m_i}$ denote the Euclidean distance metric in $\reals^{m_i}$. We define a metric $d{_i}^{(cat)}$ on $\sX$ and an isometric embedding of $(\sX, d{_i}^{(cat)})$ into $(\reals^{m_i},d{_E}^{m_i})$:
 \begin{eqnarray}
 \nonumber{}d{_i}^{(cat)}(\v{x}, \v{x}') & = & \left\{\begin{array}{ll}
 \nonumber{} 0 & \textrm{ if } \delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{false}\\
@@ -248,10 +266,10 @@ Next, let's consider a categorical-valued input dimension $i$ with $m_i$ possibl
 \end{eqnarray}
 \noindent{}where $\v{e_j} \in \reals^{m_i}$ is zero in all dimensions except $j$, where it it $1$.
 
-\begin{prop}Embedding $f{_i}^{(cat)}$ is an isometric embedding of $(\mathcal{X}, d{_i}^{(cat)})$ into $(\reals^{m_i},d{_E}^{m_i})$.
+\begin{prop}Embedding $f{_i}^{(cat)}$ is an isometric embedding of $(\sX, d{_i}^{(cat)})$ into $(\reals^{m_i},d{_E}^{m_i})$.
 \label{prop:f_d_cat_isometric}
 \begin{proof}
-Consider two inputs $\v{x},\v{x}' \in \mathcal{X}$. As in the proof of Proposition \ref{prop:f_d_cont_isometric}, we need to show that $d{_i}^{(cat)}(\v{x},\v{x}') = d{_E}^{m_i}(f{_i}^{(cat)}(\v{x}),f{_i}^{(cat)}(\v{x}'))$ and consider the following cases.
+Consider two inputs $\v{x},\v{x}' \in \sX$. As in the proof of Proposition \ref{prop:f_d_cont_isometric}, we need to show that $d{_i}^{(cat)}(\v{x},\v{x}') = d{_E}^{m_i}(f{_i}^{(cat)}(\v{x}),f{_i}^{(cat)}(\v{x}'))$ and consider the following cases.
 
 ~\\\noindent{}\textbf{Case 1}: $\delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{false}$.
 In this case, we trivially have 
@@ -275,7 +293,7 @@ If $x_i=x_i'=v_{i,j}$, we have
 \end{prop}
 
 \begin{prop}
-  $\kappa\bigl(d{_i}^{(cat)}(\cdot,\cdot)\bigr)$ is a positive semi-definite covariance function over input space $\mathcal{X}$. 
+  $\kappa\bigl(d{_i}^{(cat)}(\cdot,\cdot)\bigr)$ is a positive semi-definite covariance function over input space $\sX$. 
 \begin{proof}
  This is a trivial extension to the proof of Proposition \ref{prop:cont_psd_proof}.
 \end{proof}
