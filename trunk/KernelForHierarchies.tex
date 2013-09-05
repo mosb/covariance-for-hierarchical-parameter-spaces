@@ -35,8 +35,8 @@
 \newcommand{\reals}{\mathds{R}}
 \newcommand{\sX}{\mathcal{X}}
 \newcommand{\sD}{\mathcal{D}}
-\newcommand{\br}{^{(\text{br})}}
-\newcommand{\cat}{^{(\text{c})}}
+\newcommand{\br}{^{\text{\textnormal{br}}}}
+\newcommand{\cat}{^{\text{\textnormal{c}}}}
 % ============== ==============
 
 \newcommand{\cut}[1]{}
@@ -148,7 +148,7 @@
 \noindent{}We define kernels for mixed continuous/discrete spaces and conditional spaces and show that they are positive definite.
 \end{abstract}
 
-We aim to do inference about some function $g$ with domain (input space) $\sX$. $\sX = \prod_{i=1}^D \sX_i$ is a $D$-dimensional input space, where each individual dimension is either bounded real or categorical, that is, $\sX_i$ is either $[L_i, U_i] \subset \reals$ (with lower and upper bounds $L_i$ and $U_i$, respectively) or $\{1,\,\ldots,\,m_i\}$. 
+We aim to do inference about some function $g$ with domain (input space) $\sX$. $\sX = \prod_{i=1}^D \sX_i$ is a $D$-dimensional input space, where each individual dimension is either bounded real or categorical, that is, $\sX_i$ is either $[L_i, U_i] \subset \reals$ (with lower and upper bounds $L_i$ and $U_i$, respectively) or $\{v_{i,1}, \dots, v_{i,m_i}\}$. 
 
 Associated with $\sX$, there is a DAG structure $\sD$, whose vertices are the dimensions $\{1,\,\ldots,\,D\}$. $\sX$ will be restricted by $\sD$: if vertex $i$ has children under $\sD$, $\sX_i$ must be categorical. $\sD$ is also used to specify whether each input is \emph{active}: that is, relevant to inference about $g$. In particular, we assume each input dimension is only active under some instantiations of its ancestor dimensions in $\sD$. More precisely, we define $D$ functions $\delta_i\colon \sX\mapsto \mathcal{B}$, for $i \in \{1,\,\ldots,\,D\}$, and where $\mathcal{B} = \{\text{true}, \text{false}\}$. We take 
 \begin{equation}
@@ -207,68 +207,76 @@ where $\v{y}_m = f{_i}\bigl(\v{x}_m)$ and similar for $\v{x}_m$. Then, by assump
 \end{proof}
 \end{prop}
 
+We'll now define pseudometrics $d_i$ and associated isometries $f_i$ for both the bounded real and categorical cases. 
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Bounded Real Dimensions}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Let's first define $f\br_i$ and $d_i$ for the case that the input $\sX_i=[L_i, U_i]$ is bounded real. We first define a function $d_i\br$ on $\sX$,
+Let's first define $f\br_i$ and $d\br_i$ for the case that the input $\sX_i=[L_i, U_i]$ is bounded real. We first define a `difference' function $d\br_i$ on $\sX$,
 
 \begin{eqnarray}
-\nonumber{}d_i\br(\v{x}, \v{x}') & = & \left\{\begin{array}{ll}
+\nonumber{}d\br_i(\v{x}, \v{x}') & = & \left\{\begin{array}{ll}
 \nonumber{} 0 & \textrm{ if } \delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{false}\\
 \nonumber{} w_i & \textrm{ if } \delta_i(\v{x}) \neq \delta_i(\v{x}')\\
-\nonumber{} w_i \sqrt{2} \sqrt{1 - \cos(\pi \frac{x_i-x_i'}{U_i-L_i})} & \textrm{ otherwise. }\end{array}\right\}.
+\nonumber{} w_i \sqrt{2} \sqrt{1 - \cos(\pi \frac{x_i-x_i'}{U_i-L_i})} & \textrm{ if } \delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{true}. \end{array}\right.
 \end{eqnarray}
 
+As desired, if $i$ is inactive for both $\v{x}$ and $\v{x}'$, $d\br_i$ specifies that $g(\v{x})$ and $g(\v{x}')$ should not differ owing to differences between $x_i$ and $x_i'$. If $i$ is inactive for exactly one of $\v{x}$ and $\v{x}'$, $g(\v{x})$ and $g(\v{x}')$ are as different as is possible due to $x_i$ and $x_i'$. If $i$ is active for both $\v{x}$ and $\v{x}'$, the difference between $g(\v{x})$ and $g(\v{x}')$ due to $x_i$ and $x_i'$ increases monotonically with increasing $\left|x_i-x_i'\right|$.
+
 \begin{prop}
-  $d_i$ is a pseudometric on $\sX$. 
+  $d\br_i$ is a pseudometric on $\sX$. \label{prop:dbr_pseudometric}
 \begin{proof}
-The non-negativity and symmetry of $d_i$ are trivially proven. To prove the triangle inequality, consider $\v{x}, \v{x}', \v{x}'' \in \sX$. 
+The non-negativity and symmetry of $d\br_i$ are trivially proven. To prove the triangle inequality, consider $\v{x}, \v{x}', \v{x}'' \in \sX$. 
 
-~\\\noindent{}{Case 1}: $\delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{false}$, such that $d_i(\v{x},\v{x}') = 0$. Here, from non-negativity, clearly $d_i(\v{x},\v{x}') = 0 \leq d_i(\v{x},\v{x}'') + d_i(\v{x}',\v{x}'')$.
+~\\\noindent{}{Case 1}: $\delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{false}$, such that $d\br_i(\v{x},\v{x}') = 0$. Here, from non-negativity, clearly $d\br_i(\v{x},\v{x}') = 0 \leq d\br_i(\v{x},\v{x}'') + d\br_i(\v{x}',\v{x}'')$.
 
-~\\\noindent{}{Case 2}: $\delta_i(\v{x}) \neq \delta_i(\v{x}')$, such that such that  $d_i(\v{x},\v{x}') = w_i$.  Without loss of generality, assume $\delta_i(\v{x}) = \text{true}$, $\delta_i(\v{x}') = \text{false}$ and $\delta_i(\v{x}'') = \text{true}$. 
+~\\\noindent{}{Case 2}: $\delta_i(\v{x}) \neq \delta_i(\v{x}')$, such that such that  $d\br_i(\v{x},\v{x}') = w_i$.  Without loss of generality, assume $\delta_i(\v{x}) = \text{true}$, $\delta_i(\v{x}') = \text{false}$ and $\delta_i(\v{x}'') = \text{true}$. 
 \begin{align}
-d_i(\v{x},\v{x}'') + d_i(\v{x}',\v{x}'') = d_i(\v{x},\v{x}'')  + w_i
+d\br_i(\v{x},\v{x}'') + d\br_i(\v{x}',\v{x}'') = d\br_i(\v{x},\v{x}'')  + w_i
 \end{align}
-Hence $d_i(\v{x},\v{x}'') + d_i(\v{x}',\v{x}'') \geq w_i = d_i(\v{x},\v{x}')$ by non-negativity.
+Hence $d\br_i(\v{x},\v{x}'') + d\br_i(\v{x}',\v{x}'') \geq w_i = d\br_i(\v{x},\v{x}')$ by non-negativity.
 
-~\\\noindent{}{Case 3}: $\delta_i(\v{x}) = \delta_i(\v{x}')=\textrm{true}$, such that  $d_i(\v{x},\v{x}') = w_i \sqrt{2} \sqrt{1 - \cos(\pi \frac{x_i-x_i'}{U_i-L_i})}$.  If  $\delta_i(\v{x}'') = \text{false}$,
+~\\\noindent{}{Case 3}: $\delta_i(\v{x}) = \delta_i(\v{x}')=\textrm{true}$, such that  $d\br_i(\v{x},\v{x}') = w_i \sqrt{2} \sqrt{1 - \cos(\pi \frac{x_i-x_i'}{U_i-L_i})}$.  If  $\delta_i(\v{x}'') = \text{false}$,
 \begin{align}
-d_i(\v{x},\v{x}'') + d_i(\v{x}',\v{x}'') = 2 w_i \geq w_i \sqrt{2} \sqrt{1 - \cos(\pi \frac{x_i-x_i'}{U_i-L_i})} = d_i(\v{x},\v{x}').
+d\br_i(\v{x},\v{x}'') + d\br_i(\v{x}',\v{x}'') = 2 w_i \geq w_i \sqrt{2} \sqrt{1 - \cos(\pi \frac{x_i-x_i'}{U_i-L_i})} = d\br_i(\v{x},\v{x}').
 \end{align} 
-If  $\delta_i(\v{x}'') = \text{true}$, consider the worst possible case in which, without loss of generality, $x_i=L_i$ and $x'_i=U_i$, such that $d_i(\v{x},\v{x}')=2 w_i^2$.  We define the abbreviation $\beta'' = \frac{x''_i-L_i}{U_i-L_i}$, giving
+If  $\delta_i(\v{x}'') = \text{true}$, consider the worst possible case in which, without loss of generality, $x_i=L_i$ and $x'_i=U_i$, such that $d\br_i(\v{x},\v{x}')=2 w_i^2$.  We define the abbreviation $\beta'' = \frac{x''_i-L_i}{U_i-L_i}$, giving
 \begin{align}
-\bigl(d_i(\v{x},\v{x}'') + d_i(\v{x}',\v{x}'')\bigr)^2
+\bigl(d\br_i(\v{x},\v{x}'') + d\br_i(\v{x}',\v{x}'')\bigr)^2
 & = 2w_i^2 \Bigl(\sqrt{1 - \cos (\pi \beta'')} + \sqrt{1 - \cos \bigl(\pi (1-\beta'')\bigr)}\Bigr)^2\nonumber\\
+&=2w_i^2\biggl(2 - \cos (\pi \beta'') - \cos \bigl(\pi (1-\beta'')\bigr)
+\nonumber\\
+&\qquad\qquad+2\sqrt{\Bigl(1 - \cos (\pi \beta'')\Bigr)\Bigl(1 - \cos \bigl(\pi (1-\beta'')\bigr)\Bigr)}\biggr)\nonumber\\
+&=2w_i^2\biggl(2 +2\sqrt{1 + \cos (\pi \beta'')\cos \bigl(\pi (1-\beta'')\bigr)}\biggr)\nonumber\\
 &=4 w_i^2 \bigl(1 + \left|\sin \pi \beta'' \right|\bigr)\nonumber\\
-&\geq 4 w_i^2 = d_i(\v{x},\v{x}')^2.
+&\geq 4 w_i^2 = d\br_i(\v{x},\v{x}')^2.
 \end{align}
-Hence, from non-negativity, we have $d_i(\v{x},\v{x}'') + d_i(\v{x}',\v{x}'')\geq d_i(\v{x},\v{x}')$.
+Hence, from non-negativity, we have $d\br_i(\v{x},\v{x}'') + d\br_i(\v{x}',\v{x}'')\geq d\br_i(\v{x},\v{x}')$.
 \end{proof}
 \end{prop}
 
-Now we define an isometric embedding $f_i\br$ of $(\sX, d_i\br)$ into $(\reals^{2},d_{\text{E}})$:
+Now we define an isometric embedding $f_i\br$ of $(\sX, d\br_i)$ into $(\reals^{2},d_{\text{E}})$:
 
 \begin{eqnarray}
 \nonumber{}f_i\br(\v{x}) & = & \left\{\begin{array}{ll}
 [0,0]^\transpose & \textrm{ if } \delta_i(\v{x}) = \textrm{ false }\\
-\nonumber{} w_i [\sin{\pi\frac{x_i}{U_i-L_i}}, \cos{\pi\frac{x_i}{U_i-L_i}}]^\transpose & \textrm{ otherwise.}\end{array}\right\}
+\nonumber{} w_i [\sin{\pi\frac{x_i}{U_i-L_i}}, \cos{\pi\frac{x_i}{U_i-L_i}}]^\transpose & \textrm{ otherwise.}\end{array}\right..
 \end{eqnarray}
 
-\begin{prop}Embedding $f_i\br$ is an isometric embedding of $(\sX, d_i\br)$ into $(\reals^2, d_{\text{E}})$.
+\begin{prop}$f_i\br$ is an isometry from $(\sX, d\br_i)$ to $(\reals^2, d_{{\text{E}}})$.
 \label{prop:f_d_cont_isometric}
 \begin{proof}
-Consider two inputs $\v{x},\v{x}' \in \sX$. We need to show that $d_i\br(\v{x},\v{x}') = d_{\text{E}}(f_i\br(\v{x}),f_i\br(\v{x}'))$.
+Consider two inputs $\v{x},\v{x}' \in \sX$. We need to show that $d\br_i(\v{x},\v{x}') = d_{\text{E}}\bigl(f_i\br(\v{x}),f_i\br(\v{x}')\bigr)$.
 We use the abbreviation $\alpha = \pi\frac{x_i}{U_i-L_i}$ and $\alpha' = \pi\frac{x'_i}{U_i-L_i}$ and consider the following three possible cases of dimension $i$ being active or inactive in $\v{x}$ and $\v{x}'$.
 
 ~\\\noindent{}{Case 1}: $\delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{false}$.
 In this case, we trivially have 
-\[d_{\text{E}}(f_i\br(\v{x}),f_i\br(\v{x}')) = d_{\text{E}}([0,0]^\transpose, [0,0]^\transpose) = 0 = d_i\br(\v{x},\v{x}').\]
+\[d_{\text{E}}(f_i\br(\v{x}),f_i\br(\v{x}')) = d_{\text{E}}([0,0]^\transpose, [0,0]^\transpose) = 0 = d\br_i(\v{x},\v{x}').\]
 
 ~\\\noindent{}{Case 2}: $\delta_i(\v{x}) \neq \delta_i(\v{x}')$. In this case, we have
-\[d_{\text{E}}(f_i\br(\v{x}),f_i\br(\v{x}')) = d_{\text{E}}([\sin{\alpha}, \cos{\alpha}]^\transpose, [0,0]^\transpose) = \sqrt{w_i^2 (\sin^2{\alpha} + \cos^2{\alpha})} = w_i = d_i(\v{x},\v{x}'),\]
+\[d_{\text{E}}(f_i\br(\v{x}),f_i\br(\v{x}')) = d_{\text{E}}([\sin{\alpha}, \cos{\alpha}]^\transpose, [0,0]^\transpose) = \sqrt{w_i^2 (\sin^2{\alpha} + \cos^2{\alpha})} = w_i = d\br_i(\v{x},\v{x}'),\]
 and symmetrically for $d_{\text{E}}([0,0]^\transpose, [\sin{\alpha}, \cos{\alpha}]^\transpose)$.
 
 ~\\\noindent{}{Case 3}: $\delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{true}$. We have:
@@ -276,9 +284,9 @@ and symmetrically for $d_{\text{E}}([0,0]^\transpose, [\sin{\alpha}, \cos{\alpha
 \nonumber{}d_{\text{E}}(f_i\br(\v{x}),f_i\br(\v{x}')) & = & d_{\text{E}}(w_i [\sin{\alpha}, \cos{\alpha}]^\transpose, w_i [\sin{\alpha'}, \cos{\alpha'}]^\transpose)\\ 
 \nonumber{}& = & w_i \sqrt{(\sin{\alpha}-\sin{\alpha'})^2+ (\cos{\alpha}-\cos{\alpha'})^2}\\
 \nonumber{}& = & w_i \sqrt{\sin^2{\alpha} -2 \sin{\alpha}\sin{\alpha'} + \sin^2{\alpha'}  + \cos^2{\alpha} -2 \cos{\alpha}\cos{\alpha'} + \cos^2{\alpha'} }\\
-\nonumber{}& = & w_i \sqrt{(\sin^2{\alpha}+\cos^2{\alpha})   +  (\sin^2{\alpha'}+\cos^2{\alpha'})   -2 (\sin{\alpha}\sin{\alpha'} + \cos{\alpha}\cos{\alpha'})}\\
-\label{eqn:simplified}& = & w_i \sqrt{ 1+1-2 \cos(\alpha-\alpha')}\\
-\nonumber{}& = & w_i \sqrt{2} \sqrt{1 - \cos(\pi \frac{x_i-x_i'}{U_i-L_i})} = d_i(\v{x}, \v{x}'),
+\nonumber{}& = & w_i \sqrt{(\sin^2{\alpha}+\cos^2{\alpha})   +  (\sin^2{\alpha'}+\cos^2{\alpha'})   -2 (\sin{\alpha}\sin{\alpha'} + \cos{\alpha}\cos{\alpha'})}\nonumber\\
+& = & w_i \sqrt{ 1+1-2 \cos(\alpha-\alpha')}\nonumber\\
+& = & w_i \sqrt{2} \sqrt{1 - \cos(\pi \frac{x_i-x_i'}{U_i-L_i})} = d\br_i(\v{x}, \v{x}'),\label{eqn:simplified}
 \end{eqnarray}
 where (\ref{eqn:simplified}) follows from the previous line by using the identity 
 \[\cos{(a-b)} = \cos{a}\cos{b} + \sin{a}\sin{b}.\]
@@ -294,56 +302,62 @@ where (\ref{eqn:simplified}) follows from the previous line by using the identit
 \section{Categorical Dimensions}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Next, let's consider a categorical-valued input dimension $i$ with $m_i$ possible values $V_i = \{v_{i,1}, \dots, v_{i,m_i}\}$. As in the continuous case, we define a delta function $\delta_i$ that maps complete inputs $\v{x} \in \sX$ to true if dimension $i$ is active in the context of the instantiation of $i$'s ancestors in $\v{x}$, and to false otherwise. Let $d{_E}^{m_i}$ denote the Euclidean distance metric in $\reals^{m_i}$. We define a metric $d{_i}\cat$ on $\sX$ and an isometric embedding of $(\sX, d{_i}\cat)$ into $(\reals^{m_i},d{_E}^{m_i})$:
+Now let's define $f\cat_i$ and $d\cat_i$ for the case that the input $\sX_i=\{v_{i,1}, \dots, v_{i,m_i}\}$ is categorical with $m_i$ possible values. 
+Proceeding as above, we define a pseudometric $d\cat_i$ on $\sX$ and an isometry from $(\sX, d\cat_i)$ to $(\reals^{m_i},d_{\text{E}}^{m_i})$. 
+
+Firstly,
 \begin{eqnarray}
-\nonumber{}d{_i}\cat(\v{x}, \v{x}') & = & \left\{\begin{array}{ll}
+\nonumber{}d\cat_i(\v{x}, \v{x}') & = & \left\{
+\begin{array}{ll}
 \nonumber{} 0 & \textrm{ if } \delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{false}\\
 \nonumber{} w_i & \textrm{ if } \delta_i(\v{x}) \neq \delta_i(\v{x}')\\
-\nonumber{} w_i \sqrt{2} \indicator_{x_i \neq x_i'} & \textrm{ otherwise. }\end{array}\right\}
+\nonumber{} w_i \sqrt{2} \indicator_{x_i \neq x_i'} 
+& \textrm{ if } \delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{true}.
+\end{array}
+\right.
 \end{eqnarray}
 
+\begin{prop}
+ $d\cat_i$ is a pseudometric on $\sX$.
+ \begin{proof}
+ A trivial modification of the proof to Proposition \ref{prop:dbr_pseudometric}.
+ \end{proof}
+\end{prop}
+
+Secondly,
 \begin{eqnarray}
-\nonumber{}f{_i}\cat(\v{x}) & = & \left\{\begin{array}{ll}
+\nonumber{}f\cat_i(\v{x}) & = & \left\{\begin{array}{ll}
 \v{0} \in \reals^{m_i} & \textrm{ if } \delta_i(\v{x}) = \textrm{ false }\\
-\nonumber{} w_i \v{e_j} & \delta_i(\v{x}) = \textrm{ true and } x_i = v_{i,j},
-\end{array}\right\}
+\nonumber{} w_i\,\v{e_j} & \delta_i(\v{x}) = \textrm{ true and } x_i = v_{i,j},
+\end{array}\right.
 \end{eqnarray}
 \noindent{}where $\v{e_j} \in \reals^{m_i}$ is zero in all dimensions except $j$, where it it $1$.
 
-\begin{prop}Embedding $f{_i}\cat$ is an isometric embedding of $(\sX, d{_i}\cat)$ into $(\reals^{m_i},d{_E}^{m_i})$.
+\begin{prop}Embedding $f\cat_i$ is an isometric embedding of $(\sX, d\cat_i)$ into $(\reals^{m_i},d_{\text{E}}^{m_i})$.
 \label{prop:f_d_cat_isometric}
 \begin{proof}
-Consider two inputs $\v{x},\v{x}' \in \sX$. As in the proof of Proposition \ref{prop:f_d_cont_isometric}, we need to show that $d{_i}\cat(\v{x},\v{x}') = d{_E}^{m_i}(f{_i}\cat(\v{x}),f{_i}\cat(\v{x}'))$ and consider the following cases.
+Consider two inputs $\v{x},\v{x}' \in \sX$. As in the proof of Proposition \ref{prop:f_d_cont_isometric}, we need to show that $d\cat_i(\v{x},\v{x}') = d_{\text{E}}^{m_i}(f\cat_i(\v{x}),f\cat_i(\v{x}'))$ and consider the following cases.
 
 ~\\\noindent{}{Case 1}: $\delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{false}$.
 In this case, we trivially have 
-\[d{_E}^{m_i}(f_i\br(\v{x}),f_i\br(\v{x}')) = d{_E}^{m_i}(\v{0}, \v{0}) = 0 = d_i\br(\v{x},\v{x}').\]
+\[d_{\text{E}}^{m_i}(f_i\br(\v{x}),f_i\br(\v{x}')) = d_{\text{E}}^{m_i}(\v{0}, \v{0}) = 0 = d_i\br(\v{x},\v{x}').\]
 
 ~\\\noindent{}{Case 2}: $\delta_i(\v{x}) \neq \delta_i(\v{x}')$. In this case, we have
-\[d{_E}^{m_i}(f{_i}\cat(\v{x}),f{_i}\cat(\v{x}')) = d{_E}^{m_i}(w_i \v{e_j}, \v{0}) = w_i = d_i(\v{x},\v{x}'),\]
-and symmetrically for $d_{\text{E}}(\v{0}, w_i \v{e_j})$.
+\[d_{\text{E}}^{m_i}(f\cat_i(\v{x}),f\cat_i(\v{x}')) = d_{\text{E}}^{m_i}(w_i\,\v{e_j}, \v{0}) = w_i = d_i(\v{x},\v{x}'),\]
+and symmetrically for $d_{\text{E}}(\v{0}, w_i\,\v{e_j})$.
 
 ~\\\noindent{}{Case 3}: $\delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{true}$. 
 If $x_i=x_i'=v_{i,j}$, we have 
 \begin{eqnarray}
-\nonumber{}d{_E}^{m_i}(f{_i}\cat(\v{x}),f{_i}\cat(\v{x}')) & = & d{_E}^{m_i}(w_i \v{e_j}, w_i \v{e_j}) = 0 = d{_i}\cat(\v{x}, \v{x}')
+\nonumber{}d_{\text{E}}^{m_i}(f\cat_i(\v{x}),f\cat_i(\v{x}')) & = & d_{\text{E}}^{m_i}(w_i\,\v{e_j}, w_i\,\v{e_j}) = 0 = d\cat_i(\v{x}, \v{x}')
 \end{eqnarray}
 
 \noindent{}If $x_i=v_{i,j} \neq v_{i,j'} = x_i'=$, we have 
 \begin{eqnarray} 
-\nonumber{}d_{\text{E}}(f{_i}\cat(\v{x}),f{_i}\cat(\v{x}')) & = & d{_E}^{m_i}(w_i \v{e_j}, w_i \v{e_{j'}}) = w_i \sqrt{2} = d{_i}\cat(\v{x}, \v{x}')
+\nonumber{}d_{\text{E}}(f\cat_i(\v{x}),f\cat_i(\v{x}')) & = & d_{\text{E}}^{m_i}(w_i\,\v{e_j}, w_i \v{e_{j'}}) = w_i \sqrt{2} = d\cat_i(\v{x}, \v{x}')
 \end{eqnarray}
 \end{proof}
 \end{prop}
-
-\begin{prop}
-  $\kappa\bigl(d{_i}\cat(\cdot,\cdot)\bigr)$ is a positive semi-definite covariance function over input space $\sX$. 
-\begin{proof}
- This is a trivial extension to the proof of Proposition \ref{prop:cont_psd_proof}.
-\end{proof}
-\end{prop}
-
-\note{FH: missing - the trivial part where we multiply together all the kernels to define a PSD kernel for the whole space.}
 
 %\bibliographystyle{theapa}
 %\renewcommand{\baselinestretch}{0.97}
