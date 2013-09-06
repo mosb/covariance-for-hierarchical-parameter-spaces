@@ -315,7 +315,9 @@ with a kernel over Euclidean space to construct a valid kernel over space $\sX$.
 \begin{eqnarray}
 \nonumber{}f\cat_i(\v{x}) & = & \left\{\begin{array}{ll}
 \v{0} \in \reals^{m_i} & \textrm{ if } \delta_i(\v{x}) = \textrm{ false }\\
-\nonumber{} \omega_i\,(\v{e_j}+(1-\rho)\sum_{l\neq j} \v{e_l}) & \delta_i(\v{x}) = \textrm{ true and } x_i = v_{i,j},
+\nonumber{} \omega_i\,\frac{\v{e_j}+(1-\rho)\sum_{l\neq j} \v{e_l}}
+{\|\v{e_j}+(1-\rho)\sum_{l\neq j} \v{e_l}\|}
+ & \delta_i(\v{x}) = \textrm{ true and } x_i = v_{i,j},
 \end{array}\right.
 \end{eqnarray}
 \noindent{}where $\v{e_j} \in \reals^{m_i}$ is zero in all dimensions except $j$, where it it $1$.
