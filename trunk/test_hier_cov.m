@@ -72,7 +72,7 @@ parents
 %x
 %isactive_matrix
 
-% But we can make a kernel for each dimension and multiply the kernels.
+% We can make a kernel for each dimension and multiply the kernels.
 K = nan(N,N,D);
 for d=1:D
     K(:,:,d) = k(Dist(:,:,d));
@@ -81,7 +81,7 @@ end
 K_combined = prod(K,3);
 min_eig_K_combined_correctly = min(eig( K_combined ))
 
-% We can't just add up the distances!
+% But we can't just add up the distances!
 Dist_sum = sum(Dist,3);
 min_eig_of_k_with_dist_sum_combined_wrongly = min(eig(k(Dist_sum))) % not PSD!
 
