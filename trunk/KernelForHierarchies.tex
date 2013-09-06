@@ -41,6 +41,7 @@
 % ============== ==============
 
 \newcommand{\cut}[1]{}
+\newcommand{\hide}[1]{}
 \renewcommand{\blue}[1]{{\textcolor{blue}{#1}}}
 %\renewcommand{\blue}[1]{#1}
 \usepackage{rotating}
@@ -250,12 +251,10 @@ This pseudometric is defined by two parameters: $\omega_i \in [0,1]$ and $\rho_i
 \omega_i = \prod_{j \in \text{anc}_i \cup \{i\}} \gamma_j, 
 \end{equation}
 where $\gamma_j \in [0,1]$. This encodes the intuitive notion that differences on lower levels of the hierarchy count less than differences in their ancestors.
-\note{FH: added $\gamma_i$ in the product for $w_i$, so we can parameterize the weight of root nodes.}
 
 Also note that, as desired, if $i$ is inactive for both $\v{x}$ and $\v{x}'$, $d\br_i$ specifies that $g(\v{x})$ and $g(\v{x}')$ should not differ owing to differences between $x_i$ and $x_i'$. Secondly, if $i$ is active for both $\v{x}$ and $\v{x}'$, the difference between $g(\v{x})$ and $g(\v{x}')$ due to $x_i$ and $x_i'$ increases monotonically with increasing $\left|x_i-x_i'\right|$. Parameter $\rho_i$ controls whether differing in the activity of $i$ contributes more or less to the distance than differing in $x_i$ should $i$ be active. If $\rho = \nicefrac{1}{3}$, and if $i$ is inactive for exactly one of $\v{x}$ and $\v{x}'$, $g(\v{x})$ and $g(\v{x}')$ are as different as is possible due to dimension $i$; that is, $g(\v{x})$ and $g(\v{x}')$ are exactly as different in that case as if $x_i=l_i$ and $x_i'=u_i$. For $\rho>\nicefrac{1}{3}$, $i$ being active for both $\v{x}$ and $\v{x}'$ means that $g(\v{x})$ and $g(\v{x}')$ could potentially be more different than if
-$i$ was active in only one of them. For $\rho<\nicefrac{1}{3}$, the converse is true.\footnote{Note that $\v{x}$ and $\v{x}'$ must differ in at least one ancestor dimension of $i$ in order for $\delta_i(\v{x}) \neq \delta_i(\v{x}')$ to hold, such that in the final kernel combining kernels $k_i$ due to each dimension $i$, differences in the activity of dimension $i$ are penalized both in kernel $k_i$ and in the distance for the kernel of the ancestor dimension causing the difference in $i$'s activity.
-\note{FH: note: if we wanted to, we could probably get a condition for the joint overall kernel that the distance will always be larger if configurations differ on a higher level in the dimensionality DAG, by multiplying $\omega_i$ by the weights $\omega_j \in [0,1]$ of all of $i$'s ancestors $j$ (because at least one ancestor has to differ). We'd further have to divide $\omega_i$ by the maximal number of descendants a dimension has, in order to ensure that a difference at a higher level counts more than all the differences at the descendant-dimensions combined. But of course for this we wouldn't be able to do the proof of PSD-ness for each dimension by itself, so things would get a lot more hairy, and at least at this point there is no need for that.\\MO: actually, we should absolutely be able to do that, without any problem. I don't think it'll get hairy. It's just a matter of replacing $\omega_i$ with a slightly different constant, dependent on $i$, but independent of $\v{x}$. Let's do it!\\FH: I agree 
-with what you did, and it's nice! What I meant would be hairy is to not penalize differences in activity of $i$ at all on the level of $i$, but to do it all on the ancestor level. For that each individual dimension would not define a kernel anymore, so the current way of proving PSD-ness wouldn't work anymore, and in general, thinking more about it now, the end result might not even be PSD. But enough of me going on about this, what we have now is nice :-) Please feel free to delete the note ...}}
+$i$ was active in only one of them. For $\rho<\nicefrac{1}{3}$, the converse is true.\footnote{Note that $\v{x}$ and $\v{x}'$ must differ in at least one ancestor dimension of $i$ in order for $\delta_i(\v{x}) \neq \delta_i(\v{x}')$ to hold, such that in the final kernel combining kernels $k_i$ due to each dimension $i$, differences in the activity of dimension $i$ are penalized both in kernel $k_i$ and in the distance for the kernel of the ancestor dimension causing the difference in $i$'s activity.}
+%\note{FH: note: if we wanted to, we could probably get a condition for the joint overall kernel that the distance will always be larger if configurations differ on a higher level in the dimensionality DAG, by multiplying $\omega_i$ by the weights $\omega_j \in [0,1]$ of all of $i$'s ancestors $j$ (because at least one ancestor has to differ). We'd further have to divide $\omega_i$ by the maximal number of descendants a dimension has, in order to ensure that a difference at a higher level counts more than all the differences at the descendant-dimensions combined. But of course for this we wouldn't be able to do the proof of PSD-ness for each dimension by itself, so things would get a lot more hairy, and at least at this point there is no need for that.\\MO: actually, we should absolutely be able to do that, without any problem. I don't think it'll get hairy. It's just a matter of replacing $\omega_i$ with a slightly different constant, dependent on $i$, but independent of $\v{x}$. Let's do it!\\FH: I agree with what you did, and it's nice! What I meant would be hairy is to not penalize differences in activity of $i$ at all on the level of $i$, but to do it all on the ancestor level. For that each individual dimension would not define a kernel anymore, so the current way of proving PSD-ness wouldn't work anymore, and in general, thinking more about it now, the end result might not even be PSD. But enough of me going on about this, what we have now is nice :-) Please feel free to delete the note ...}
 
 We now show that $d\br_i$ and $f\br_i$ can be plugged into a positive semi-definite kernel over Euclidean space to define a valid kernel over space $\sX$.
 
@@ -294,12 +293,91 @@ where (\ref{eqn:simplified}) follows from the previous line by using the identit
 \end{prop}
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Categorical Dimensions}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Now let's define $f\cat_i$ and $d\cat_i$ for the case that the input $\sX_i=\{v_{i,1}, \dots, v_{i,m_i}\}$ is categorical with $m_i$ possible values. 
-Proceeding as above, we define a pseudometric $d\cat_i$ on $\sX$ and an isometry from $(\sX, d\cat_i)$ to $(\reals^{m_i},d_{\text{E}}^{m_i})$, and show that we can use combine these
+Proceeding as above, we define a pseudometric $d\cat_i$ on $\sX$ and an isometry from $(\sX, d\cat_i)$ to $(\reals^{m_i},d_{\text{E}}^{m_i})$, and show that we can combine these
+with a kernel over Euclidean space to construct a valid kernel over space $\sX$. 
+
+\begin{eqnarray}
+\nonumber{}d\cat_i(\v{x}, \v{x}') & = & \left\{
+\begin{array}{ll}
+\nonumber{} 0 & \textrm{ if } \delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{false}\\
+\nonumber{} w_i & \textrm{ if } \delta_i(\v{x}) \neq \delta_i(\v{x}')\\
+\nonumber{} w_i \sqrt{2} \indicator_{x_i \neq x_i'} 
+& \textrm{ if } \delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{true}.
+\end{array}
+\right.
+\end{eqnarray}
+
+\begin{eqnarray}
+\nonumber{}f\cat_i(\v{x}) & = & \left\{\begin{array}{ll}
+\v{0} \in \reals^{m_i} & \textrm{ if } \delta_i(\v{x}) = \textrm{ false }\\
+\nonumber{} w_i\,\v{e_j} & \delta_i(\v{x}) = \textrm{ true and } x_i = v_{i,j},
+\end{array}\right.
+\end{eqnarray}
+\noindent{}where $\v{e_j} \in \reals^{m_i}$ is zero in all dimensions except $j$, where it it $1$.
+
+\begin{prop}
+Let $\kappa$ be a positive semi-definite covariance function over Euclidean space.
+Then, $k_i\colon \sX \times \sX\to \reals^+$, defined by 
+%\[k_i(\v{x},\v{x}') = \kappa( d_{\text{E}}(f_i(\v{x}), f_i(\v{x}')) )\]
+\[k_i(\v{x},\v{x}') = \kappa\bigl( d\cat_i(\v{x}, \v{x}') \bigr)\]
+is a positive semi-definite covariance function over input space $\sX$. 
+\label{prop:cat_psd}
+\begin{proof}
+We proceed as in the proof of Proposition \ref{prop:cont_psd} to show that, for any two inputs $\v{x},\v{x}' \in \sX$, the isometry condition $d_{\text{E}}^{m_i}(f\cat_i(\v{x}),f\cat_i(\v{x}')) = d\cat_i(\v{x},\v{x}')$ holds.
+
+~\\\noindent{}{Case 1}: $\delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{false}$.
+In this case, we trivially have 
+\[d_{\text{E}}^{m_i}(f_i\br(\v{x}),f_i\br(\v{x}')) = d_{\text{E}}^{m_i}(\v{0}, \v{0}) = 0 = d_i\br(\v{x},\v{x}').\]
+
+~\\\noindent{}{Case 2}: $\delta_i(\v{x}) \neq \delta_i(\v{x}')$. In this case, we have
+\[d_{\text{E}}^{m_i}(f\cat_i(\v{x}),f\cat_i(\v{x}')) = d_{\text{E}}^{m_i}(w_i\,\v{e_j}, \v{0}) = w_i = d_i(\v{x},\v{x}'),\]
+and symmetrically for $d_{\text{E}}(\v{0}, w_i\,\v{e_j})$.
+
+~\\\noindent{}{Case 3}: $\delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{true}$. 
+If $x_i=x_i'=v_{i,j}$, we have 
+\begin{eqnarray}
+\nonumber{}d_{\text{E}}^{m_i}(f\cat_i(\v{x}),f\cat_i(\v{x}')) & = & d_{\text{E}}^{m_i}(w_i\,\v{e_j}, w_i\,\v{e_j}) = 0 = d\cat_i(\v{x}, \v{x}')
+\end{eqnarray}
+
+\noindent{}If $x_i=v_{i,j} \neq v_{i,j'} = x_i'=$, we have 
+\begin{eqnarray} 
+\nonumber{}d_{\text{E}}(f\cat_i(\v{x}),f\cat_i(\v{x}')) & = & d_{\text{E}}^{m_i}(w_i\,\v{e_j}, w_i \v{e_{j'}}) = w_i \sqrt{2} = d\cat_i(\v{x}, \v{x}')
+\end{eqnarray}
+\end{proof}
+\end{prop}
+
+
+
+
+
+
+
+\hide{
+%FH: hid this for now since it is more complicated and also does not match the prototypical implementation. 
+% We can go back to this next week when we have a bit more time.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Categorical Dimensions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Now let's define $f\cat_i$ and $d\cat_i$ for the case that the input $\sX_i=\{v_{i,1}, \dots, v_{i,m_i}\}$ is categorical with $m_i$ possible values. 
+Proceeding as above, we define a pseudometric $d\cat_i$ on $\sX$ and an isometry from $(\sX, d\cat_i)$ to $(\reals^{m_i},d_{\text{E}}^{m_i})$, and show that we can combine these
 with a kernel over Euclidean space to construct a valid kernel over space $\sX$. 
 
 \begin{eqnarray}
@@ -320,7 +398,7 @@ with a kernel over Euclidean space to construct a valid kernel over space $\sX$.
 \v{0} \in \reals^{m_i} & \textrm{ if } \delta_i(\v{x}) = \textrm{ false }\\
 \nonumber{} \omega_i\,\frac{\v{e_j}+(1-\rho)\sum_{l\neq j} \v{e_l}}
 {\sqrt{1+(m_i-1)(1-\rho)^2}}
- & \delta_i(\v{x}) = \textrm{ true and } x_i = v_{i,j},
+ & \textrm{ if } \delta_i(\v{x}) = \textrm{ true and } x_i = v_{i,j},
 \end{array}\right.
 \end{eqnarray}
 \noindent{}where $\v{e_j} \in \reals^{m_i}$ is zero in all dimensions except $j$, where it it $1$. Note that 
@@ -376,7 +454,7 @@ d_{\text{E}}^{m_i}\biggl(
 \end{align}
 \end{proof}
 \end{prop}
-
+}
 
 \appendix
 
