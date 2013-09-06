@@ -30,6 +30,7 @@
 \usepackage{relsize}
 
 % ============== Mike's commands ==============
+\usepackage{nicefrac}
 \newcommand{\vect}[1]{\underline{\smash{#1}}}
 \renewcommand{\v}[1]{\vect{#1}}
 \newcommand{\reals}{\mathds{R}}
@@ -234,23 +235,29 @@ explicitly denote these functions as $d\br_i$ and $f\br_i$. We first define $d\b
 \begin{eqnarray}
 \nonumber{}d\br_i(\v{x}, \v{x}') & = & \left\{\begin{array}{ll}
 \nonumber{} 0 & \textrm{ if } \delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{false}\\
-\nonumber{} w_i & \textrm{ if } \delta_i(\v{x}) \neq \delta_i(\v{x}')\\
-\nonumber{} w_i \sqrt{2} \sqrt{1 - \cos(\pi \frac{x_i-x_i'}{u_i-l_i})} & \textrm{ if } \delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{true}. \end{array}\right.
+\nonumber{} \omega_i & \textrm{ if } \delta_i(\v{x}) \neq \delta_i(\v{x}')\\
+\nonumber{} \omega_i \sqrt{2} \sqrt{1 - \cos(\pi\rho_i \frac{x_i-x_i'}{u_i-l_i})} & \textrm{ if } \delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{true}. \end{array}\right.
 \end{eqnarray}
 
-As desired, if $i$ is inactive for both $\v{x}$ and $\v{x}'$, $d\br_i$ specifies that $g(\v{x})$ and $g(\v{x}')$ should not differ owing to differences between $x_i$ and $x_i'$. 
-\note{FH: Unfortunately, intuitively this isn't quite as nice as you wrote since the second case is not the one maximizing difference (it's up to $\sqrt{2}$ smaller than the third case).}
-\note{MO: Ah, you're right: I forgot that we'd left it like that. I think we could define the third case as $\frac{w_i}{ \sqrt{2}} \sqrt{1 - \cos(\pi \frac{x_i-x_i'}{u_i-l_i})}$, and replace the $w_i$ in the isometry definition with $\frac{w_i}{2}$, if we wanted to and everything would still work. What would make more sense for the application, do you think?}
-If $i$ is inactive for exactly one of $\v{x}$ and $\v{x}'$, $g(\v{x})$ and $g(\v{x}')$ are almost as different as is possible with respect to dimension $i$, 
-regardless of the actual values of $x_i$ and $x_i'$.\footnote{Note that $\v{x}$ and $\v{x}'$ must differ in at least one ancestor dimension of $i$ in order for $\delta_i(\v{x}) \neq \delta_i(\v{x}')$ to hold, such that differences in the activity of dimension $i$ are penalized both in distance $d_i$ and in the distance for the ancestor dimension causing the difference in $i$'s activity.\note{FH: note: if we wanted to, we could probably get a condition for the joint overall kernel that the distance will always be larger if configurations differ on a higher level in the dimensionality DAG, by multiplying $w_i$ by the weights $w_j \in [0,1]$ of all of $i$'s ancestors $j$ (because at least one ancestor has to differ). We'd further have to divide $w_i$ by the maximal number of descendants a dimension has, in order to ensure that a difference at a higher level counts more than all the differences at the descendant-dimensions combined. But of course for this we wouldn't be able to do the proof of PSD-ness for each 
+This pseudometric (see Proposition \ref{prop:dbr_pseudometric}) is defined by two parameters: $\omega_i \in [0,1]$ and $\rho_i \in [0,1]$. We firstly define 
+\begin{equation}
+\omega_i = \prod_{j \in \text{anc}_i} \gamma_j, 
+\end{equation}
+where $\gamma_j \in [0,1]$. Hence the higher up $i$ is in the hierarchy $\sD$, the greater the distance due to $i$ can be. 
+
+Note that, as desired, if $i$ is inactive for both $\v{x}$ and $\v{x}'$, $d\br_i$ specifies that $g(\v{x})$ and $g(\v{x}')$ should not differ owing to differences between $x_i$ and $x_i'$. Secondly, if $i$ is active for both $\v{x}$ and $\v{x}'$, the difference between $g(\v{x})$ and $g(\v{x}')$ due to $x_i$ and $x_i'$ increases monotonically with increasing $\left|x_i-x_i'\right|$. $\rho_i$ then controls whether differing in the activity of $i$ contributes more or less to the distance than differing in $x_i$ should $i$ be active. If $\rho = \nicefrac{1}{3}$, and if $i$ is inactive for exactly one of $\v{x}$ and $\v{x}'$, $g(\v{x})$ and $g(\v{x}')$ are as different as is possible due to dimension $i$; that is, $g(\v{x})$ and $g(\v{x}')$ are eaxctly as different in that case as if $x_i=l_i$ and $x_i'=u_i$. For $\rho>\nicefrac{1}{3}$, $i$ being active for both $\v{x}$ and $\v{x}'$ means that $g(\v{x})$ and $g(\v{x}')$ could potentially be more different than if only one of the two had $i$ active. For $\rho<\nicefrac{1}{3}$, the converse is true. 
+% below is outmoded, and MO's comment is wrong
+% \note{FH: Unfortunately, intuitively this isn't quite as nice as you wrote since the second case is not the one maximizing difference (it's up to $\sqrt{2}$ smaller than the third case).}
+% \note{MO: Ah, you're right: I forgot that we'd left it like that. I think we could define the third case as $\frac{\omega_i}{ \sqrt{2}} \sqrt{1 - \cos(\pi\rho_i \frac{x_i-x_i'}{u_i-l_i})}$, and replace the $\omega_i$ in the isometry definition with $\frac{\omega_i}{2}$, if we wanted to and everything would still work. What would make more sense for the application, do you think?}
+\footnote{Note that $\v{x}$ and $\v{x}'$ must differ in at least one ancestor dimension of $i$ in order for $\delta_i(\v{x}) \neq \delta_i(\v{x}')$ to hold, such that differences in the activity of dimension $i$ are penalized both in distance $d_i$ and in the distance for the ancestor dimension causing the difference in $i$'s activity.\note{FH: note: if we wanted to, we could probably get a condition for the joint overall kernel that the distance will always be larger if configurations differ on a higher level in the dimensionality DAG, by multiplying $\omega_i$ by the weights $\omega_j \in [0,1]$ of all of $i$'s ancestors $j$ (because at least one ancestor has to differ). We'd further have to divide $\omega_i$ by the maximal number of descendants a dimension has, in order to ensure that a difference at a higher level counts more than all the differences at the descendant-dimensions combined. But of course for this we wouldn't be able to do the proof of PSD-ness for each 
 dimension by itself, so things would get a lot more hairy, and at least at this point there is no need for that.}
-\note{MO: actually, we should absolutely be able to do that, without any problem. I don't think it'll get hairy. It's just a matter of replacing $w_i$ with a slightly different constant, dependent on $i$, but independent of $\v{x}$. Let's do it!}
+\note{MO: actually, we should absolutely be able to do that, without any problem. I don't think it'll get hairy. It's just a matter of replacing $\omega_i$ with a slightly different constant, dependent on $i$, but independent of $\v{x}$. Let's do it!}
 }
 %
 %FH: reworded as this unfortunately is not quite true due to the sqrt(2).
 %If $i$ is inactive for exactly one of $\v{x}$ and $\v{x}'$, $g(\v{x})$ and $g(\v{x}')$ are as different as is possible due to $x_i$ and $x_i'$. 
 %
-Finally, if $i$ is active for both $\v{x}$ and $\v{x}'$, the difference between $g(\v{x})$ and $g(\v{x}')$ due to $x_i$ and $x_i'$ increases monotonically with increasing $\left|x_i-x_i'\right|$.
+
 
 \note{FH: I don't fully understand why we actually need to show that $d\br_i$ is a (pseudo)metric. I understand that you might argue that isometries are only defined between metric spaces, but we don't even need the fact that $f_i$ is an isometry, other than by using the property $d{_i}(\v{x},\v{x}') = d_{\text{E}}(f{_i}\bigl(\v{x}), f{_i}(\v{x}')\bigr)$ from Equation \ref{eqn:d_i}, do we? I believe we could just drop Proposition \ref{prop:dbr_pseudometric}, reword Proposition \ref{prop:f_d_cont_isometric} to just say $d_{\text{E}}\bigl(f_i\br(\v{x}),f_i\br(\v{x}')\bigr) = d\br_i(\v{x},\v{x}')$, and then aren't we done? (same for the categorical case)}
 \note{MO: you're absolutely correct, for our purposes we can do exactly as you say. I just thought it might be nice to prove that $d_i$ was a pseudometric and that $f_i$ was a (pseudo-)isometry; perhaps someone else might want to use those properties}.
@@ -262,26 +269,26 @@ The non-negativity and symmetry of $d\br_i$ are trivially proven. To prove the t
 
 ~\\\noindent{}{Case 1}: $\delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{false}$, such that $d\br_i(\v{x},\v{x}') = 0$. Here, from non-negativity, clearly $d\br_i(\v{x},\v{x}') = 0 \leq d\br_i(\v{x},\v{x}'') + d\br_i(\v{x}',\v{x}'')$.
 
-~\\\noindent{}{Case 2}: $\delta_i(\v{x}) \neq \delta_i(\v{x}')$, such that such that  $d\br_i(\v{x},\v{x}') = w_i$.  Without loss of generality, assume $\delta_i(\v{x}) = \text{true}$, $\delta_i(\v{x}') = \text{false}$ and $\delta_i(\v{x}'') = \text{true}$. 
+~\\\noindent{}{Case 2}: $\delta_i(\v{x}) \neq \delta_i(\v{x}')$, such that such that  $d\br_i(\v{x},\v{x}') = \omega_i$.  Without loss of generality, assume $\delta_i(\v{x}) = \text{true}$, $\delta_i(\v{x}') = \text{false}$ and $\delta_i(\v{x}'') = \text{true}$. 
 \begin{align}
-d\br_i(\v{x},\v{x}'') + d\br_i(\v{x}',\v{x}'') = d\br_i(\v{x},\v{x}'')  + w_i
+d\br_i(\v{x},\v{x}'') + d\br_i(\v{x}',\v{x}'') = d\br_i(\v{x},\v{x}'')  + \omega_i
 \end{align}
-Hence $d\br_i(\v{x},\v{x}'') + d\br_i(\v{x}',\v{x}'') \geq w_i = d\br_i(\v{x},\v{x}')$ by non-negativity.
+Hence $d\br_i(\v{x},\v{x}'') + d\br_i(\v{x}',\v{x}'') \geq \omega_i = d\br_i(\v{x},\v{x}')$ by non-negativity.
 
-~\\\noindent{}{Case 3}: $\delta_i(\v{x}) = \delta_i(\v{x}')=\textrm{true}$, such that  $d\br_i(\v{x},\v{x}') = w_i \sqrt{2} \sqrt{1 - \cos(\pi \frac{x_i-x_i'}{u_i-l_i})}$.  If  $\delta_i(\v{x}'') = \text{false}$,
+~\\\noindent{}{Case 3}: $\delta_i(\v{x}) = \delta_i(\v{x}')=\textrm{true}$, such that  $d\br_i(\v{x},\v{x}') = \omega_i \sqrt{2} \sqrt{1 - \cos(\pi\rho_i \frac{x_i-x_i'}{u_i-l_i})}$.  If  $\delta_i(\v{x}'') = \text{false}$,
 \begin{align}
-d\br_i(\v{x},\v{x}'') + d\br_i(\v{x}',\v{x}'') = 2 w_i \geq w_i \sqrt{2} \sqrt{1 - \cos(\pi \frac{x_i-x_i'}{u_i-l_i})} = d\br_i(\v{x},\v{x}').
+d\br_i(\v{x},\v{x}'') + d\br_i(\v{x}',\v{x}'') = 2 \omega_i \geq \omega_i \sqrt{2} \sqrt{1 - \cos(\pi\rho_i \frac{x_i-x_i'}{u_i-l_i})} = d\br_i(\v{x},\v{x}').
 \end{align} 
-If  $\delta_i(\v{x}'') = \text{true}$, consider the worst possible case in which, without loss of generality, $x_i=l_i$ and $x'_i=u_i$, such that $d\br_i(\v{x},\v{x}')=2 w_i^2$.  We define the abbreviation $\beta'' = \frac{x''_i-l_i}{u_i-l_i}$, giving
+If  $\delta_i(\v{x}'') = \text{true}$, consider the worst possible case in which, without loss of generality, $x_i=l_i$ and $x'_i=u_i$, such that $d\br_i(\v{x},\v{x}')=2 \omega_i^2$.  We define the abbreviation $\beta'' = \frac{x''_i-l_i}{u_i-l_i}$, giving
 \begin{align}
 \bigl(d\br_i(\v{x},\v{x}'') + d\br_i(\v{x}',\v{x}'')\bigr)^2
-& = 2w_i^2 \Bigl(\sqrt{1 - \cos (\pi \beta'')} + \sqrt{1 - \cos \bigl(\pi (1-\beta'')\bigr)}\Bigr)^2\nonumber\\
-&=2w_i^2\biggl(2 - \cos (\pi \beta'') - \cos \bigl(\pi (1-\beta'')\bigr)
+& = 2\omega_i^2 \Bigl(\sqrt{1 - \cos (\pi\rho_i \beta'')} + \sqrt{1 - \cos \bigl(\pi\rho_i (1-\beta'')\bigr)}\Bigr)^2\nonumber\\
+&=2\omega_i^2\biggl(2 - \cos (\pi\rho_i \beta'') - \cos \bigl(\pi\rho_i (1-\beta'')\bigr)
 \nonumber\\
-&\qquad\qquad+2\sqrt{\Bigl(1 - \cos (\pi \beta'')\Bigr)\Bigl(1 - \cos \bigl(\pi (1-\beta'')\bigr)\Bigr)}\biggr)\nonumber\\
-&=2w_i^2\biggl(2 +2\sqrt{1 + \cos (\pi \beta'')\cos \bigl(\pi (1-\beta'')\bigr)}\biggr)\nonumber\\
-&=4 w_i^2 \bigl(1 + \left|\sin \pi \beta'' \right|\bigr)\nonumber\\
-&\geq 4 w_i^2 = d\br_i(\v{x},\v{x}')^2.
+&\qquad\qquad+2\sqrt{\Bigl(1 - \cos (\pi\rho_i \beta'')\Bigr)\Bigl(1 - \cos \bigl(\pi\rho_i (1-\beta'')\bigr)\Bigr)}\biggr)\nonumber\\
+&=2\omega_i^2\biggl(2 +2\sqrt{1 + \cos (\pi\rho_i \beta'')\cos \bigl(\pi\rho_i (1-\beta'')\bigr)}\biggr)\nonumber\\
+&=4 \omega_i^2 \bigl(1 + \left|\sin \pi\rho_i \beta'' \right|\bigr)\nonumber\\
+&\geq 4 \omega_i^2 = d\br_i(\v{x},\v{x}')^2.
 \end{align}
 Hence, from non-negativity, we have $d\br_i(\v{x},\v{x}'') + d\br_i(\v{x}',\v{x}'')\geq d\br_i(\v{x},\v{x}')$.
 \end{proof}
@@ -292,31 +299,31 @@ Now we define an isometric embedding $f_i\br$ of $(\sX, d\br_i)$ into $(\reals^{
 \begin{eqnarray}
 \nonumber{}f_i\br(\v{x}) & = & \left\{\begin{array}{ll}
 [0,0]^\transpose & \textrm{ if } \delta_i(\v{x}) = \textrm{ false }\\
-\nonumber{} w_i [\sin{\pi\frac{x_i}{u_i-l_i}}, \cos{\pi\frac{x_i}{u_i-l_i}}]^\transpose & \textrm{ otherwise.}\end{array}\right..
+\nonumber{} \omega_i [\sin{\pi\rho_i\frac{x_i}{u_i-l_i}}, \cos{\pi\rho_i\frac{x_i}{u_i-l_i}}]^\transpose & \textrm{ otherwise.}\end{array}\right..
 \end{eqnarray}
 
 \begin{prop}$f_i\br$ is an isometry from $(\sX, d\br_i)$ to $(\reals^2, d_{{\text{E}}})$.
 \label{prop:f_d_cont_isometric}
 \begin{proof}
 Consider two inputs $\v{x},\v{x}' \in \sX$. We need to show that $d_{\text{E}}\bigl(f_i\br(\v{x}),f_i\br(\v{x}')\bigr) = d\br_i(\v{x},\v{x}')$.
-We use the abbreviation $\alpha = \pi\frac{x_i}{u_i-l_i}$ and $\alpha' = \pi\frac{x'_i}{u_i-l_i}$ and consider the following three possible cases of dimension $i$ being active or inactive in $\v{x}$ and $\v{x}'$.
+We use the abbreviation $\alpha = \pi\rho_i\frac{x_i}{u_i-l_i}$ and $\alpha' = \pi\rho_i\frac{x'_i}{u_i-l_i}$ and consider the following three possible cases of dimension $i$ being active or inactive in $\v{x}$ and $\v{x}'$.
 
 ~\\\noindent{}{Case 1}: $\delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{false}$.
 In this case, we trivially have 
 \[d_{\text{E}}(f_i\br(\v{x}),f_i\br(\v{x}')) = d_{\text{E}}([0,0]^\transpose, [0,0]^\transpose) = 0 = d\br_i(\v{x},\v{x}').\]
 
 ~\\\noindent{}{Case 2}: $\delta_i(\v{x}) \neq \delta_i(\v{x}')$. In this case, we have
-\[d_{\text{E}}(f_i\br(\v{x}),f_i\br(\v{x}')) = d_{\text{E}}([\sin{\alpha}, \cos{\alpha}]^\transpose, [0,0]^\transpose) = \sqrt{w_i^2 (\sin^2{\alpha} + \cos^2{\alpha})} = w_i = d\br_i(\v{x},\v{x}'),\]
+\[d_{\text{E}}(f_i\br(\v{x}),f_i\br(\v{x}')) = d_{\text{E}}([\sin{\alpha}, \cos{\alpha}]^\transpose, [0,0]^\transpose) = \sqrt{\omega_i^2 (\sin^2{\alpha} + \cos^2{\alpha})} = \omega_i = d\br_i(\v{x},\v{x}'),\]
 and symmetrically for $d_{\text{E}}([0,0]^\transpose, [\sin{\alpha}, \cos{\alpha}]^\transpose)$.
 
 ~\\\noindent{}{Case 3}: $\delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{true}$. We have:
 \begin{eqnarray}
-\nonumber{}d_{\text{E}}(f_i\br(\v{x}),f_i\br(\v{x}')) & = & d_{\text{E}}(w_i [\sin{\alpha}, \cos{\alpha}]^\transpose, w_i [\sin{\alpha'}, \cos{\alpha'}]^\transpose)\\ 
-\nonumber{}& = & w_i \sqrt{(\sin{\alpha}-\sin{\alpha'})^2+ (\cos{\alpha}-\cos{\alpha'})^2}\\
-\nonumber{}& = & w_i \sqrt{\sin^2{\alpha} -2 \sin{\alpha}\sin{\alpha'} + \sin^2{\alpha'}  + \cos^2{\alpha} -2 \cos{\alpha}\cos{\alpha'} + \cos^2{\alpha'} }\\
-\nonumber{}& = & w_i \sqrt{(\sin^2{\alpha}+\cos^2{\alpha})   +  (\sin^2{\alpha'}+\cos^2{\alpha'})   -2 (\sin{\alpha}\sin{\alpha'} + \cos{\alpha}\cos{\alpha'})}\nonumber\\
-& = & w_i \sqrt{ 1+1-2 \cos(\alpha-\alpha')}\nonumber\\
-& = & w_i \sqrt{2} \sqrt{1 - \cos(\pi \frac{x_i-x_i'}{u_i-l_i})} = d\br_i(\v{x}, \v{x}'),\label{eqn:simplified}
+\nonumber{}d_{\text{E}}(f_i\br(\v{x}),f_i\br(\v{x}')) & = & d_{\text{E}}(\omega_i [\sin{\alpha}, \cos{\alpha}]^\transpose, \omega_i [\sin{\alpha'}, \cos{\alpha'}]^\transpose)\\ 
+\nonumber{}& = & \omega_i \sqrt{(\sin{\alpha}-\sin{\alpha'})^2+ (\cos{\alpha}-\cos{\alpha'})^2}\\
+\nonumber{}& = & \omega_i \sqrt{\sin^2{\alpha} -2 \sin{\alpha}\sin{\alpha'} + \sin^2{\alpha'}  + \cos^2{\alpha} -2 \cos{\alpha}\cos{\alpha'} + \cos^2{\alpha'} }\\
+\nonumber{}& = & \omega_i \sqrt{(\sin^2{\alpha}+\cos^2{\alpha})   +  (\sin^2{\alpha'}+\cos^2{\alpha'})   -2 (\sin{\alpha}\sin{\alpha'} + \cos{\alpha}\cos{\alpha'})}\nonumber\\
+& = & \omega_i \sqrt{ 1+1-2 \cos(\alpha-\alpha')}\nonumber\\
+& = & \omega_i \sqrt{2} \sqrt{1 - \cos(\pi\rho_i \frac{x_i-x_i'}{u_i-l_i})} = d\br_i(\v{x}, \v{x}'),\label{eqn:simplified}
 \end{eqnarray}
 where (\ref{eqn:simplified}) follows from the previous line by using the identity 
 \[\cos{(a-b)} = \cos{a}\cos{b} + \sin{a}\sin{b}.\]
@@ -340,8 +347,8 @@ Firstly,
 \nonumber{}d\cat_i(\v{x}, \v{x}') & = & \left\{
 \begin{array}{ll}
 \nonumber{} 0 & \textrm{ if } \delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{false}\\
-\nonumber{} w_i & \textrm{ if } \delta_i(\v{x}) \neq \delta_i(\v{x}')\\
-\nonumber{} w_i \sqrt{2} \indicator_{x_i \neq x_i'} 
+\nonumber{} \omega_i & \textrm{ if } \delta_i(\v{x}) \neq \delta_i(\v{x}')\\
+\nonumber{} \omega_i \sqrt{2} \indicator_{x_i \neq x_i'} 
 & \textrm{ if } \delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{true}.
 \end{array}
 \right.
@@ -358,7 +365,7 @@ Secondly,
 \begin{eqnarray}
 \nonumber{}f\cat_i(\v{x}) & = & \left\{\begin{array}{ll}
 \v{0} \in \reals^{m_i} & \textrm{ if } \delta_i(\v{x}) = \textrm{ false }\\
-\nonumber{} w_i\,\v{e_j} & \delta_i(\v{x}) = \textrm{ true and } x_i = v_{i,j},
+\nonumber{} \omega_i\,\v{e_j} & \delta_i(\v{x}) = \textrm{ true and } x_i = v_{i,j},
 \end{array}\right.
 \end{eqnarray}
 \noindent{}where $\v{e_j} \in \reals^{m_i}$ is zero in all dimensions except $j$, where it it $1$.
@@ -373,18 +380,18 @@ In this case, we trivially have
 \[d_{\text{E}}^{m_i}(f_i\br(\v{x}),f_i\br(\v{x}')) = d_{\text{E}}^{m_i}(\v{0}, \v{0}) = 0 = d_i\br(\v{x},\v{x}').\]
 
 ~\\\noindent{}{Case 2}: $\delta_i(\v{x}) \neq \delta_i(\v{x}')$. In this case, we have
-\[d_{\text{E}}^{m_i}(f\cat_i(\v{x}),f\cat_i(\v{x}')) = d_{\text{E}}^{m_i}(w_i\,\v{e_j}, \v{0}) = w_i = d_i(\v{x},\v{x}'),\]
-and symmetrically for $d_{\text{E}}(\v{0}, w_i\,\v{e_j})$.
+\[d_{\text{E}}^{m_i}(f\cat_i(\v{x}),f\cat_i(\v{x}')) = d_{\text{E}}^{m_i}(\omega_i\,\v{e_j}, \v{0}) = \omega_i = d_i(\v{x},\v{x}'),\]
+and symmetrically for $d_{\text{E}}(\v{0}, \omega_i\,\v{e_j})$.
 
 ~\\\noindent{}{Case 3}: $\delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{true}$. 
 If $x_i=x_i'=v_{i,j}$, we have 
 \begin{eqnarray}
-\nonumber{}d_{\text{E}}^{m_i}(f\cat_i(\v{x}),f\cat_i(\v{x}')) & = & d_{\text{E}}^{m_i}(w_i\,\v{e_j}, w_i\,\v{e_j}) = 0 = d\cat_i(\v{x}, \v{x}')
+\nonumber{}d_{\text{E}}^{m_i}(f\cat_i(\v{x}),f\cat_i(\v{x}')) & = & d_{\text{E}}^{m_i}(\omega_i\,\v{e_j}, \omega_i\,\v{e_j}) = 0 = d\cat_i(\v{x}, \v{x}')
 \end{eqnarray}
 
 \noindent{}If $x_i=v_{i,j} \neq v_{i,j'} = x_i'=$, we have 
 \begin{eqnarray} 
-\nonumber{}d_{\text{E}}(f\cat_i(\v{x}),f\cat_i(\v{x}')) & = & d_{\text{E}}^{m_i}(w_i\,\v{e_j}, w_i \v{e_{j'}}) = w_i \sqrt{2} = d\cat_i(\v{x}, \v{x}')
+\nonumber{}d_{\text{E}}(f\cat_i(\v{x}),f\cat_i(\v{x}')) & = & d_{\text{E}}^{m_i}(\omega_i\,\v{e_j}, \omega_i \v{e_{j'}}) = \omega_i \sqrt{2} = d\cat_i(\v{x}, \v{x}')
 \end{eqnarray}
 \end{proof}
 \end{prop}
