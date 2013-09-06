@@ -35,7 +35,7 @@
 \newcommand{\reals}{\mathds{R}}
 \newcommand{\sX}{\mathcal{X}}
 \newcommand{\sD}{\mathcal{D}}
-\newcommand{\br}{^{\text{\textnormal{br}}}}
+\newcommand{\br}{^{\text{\textnormal{ r}}}}
 \newcommand{\cat}{^{\text{\textnormal{c}}}}
 % ============== ==============
 
@@ -136,11 +136,7 @@
 \title{A Kernel for Hierarchical Parameter Spaces}
 
 \author{Frank Hutter and Michael A. Osborne\\
-{\tt hutter@cs.ubc.ca} and {\tt mosb@robots.ox.ac.uk}
-%     Department of Computer Science\\
-%     University of British Columbia \\
-%     201-2366 Main Mall, BC V6T 1Z4, CANADA\\
-%     {\texttt{hutter@cs.ubc.ca}}
+{\tt fh@informatik.uni-freiburg.de} and {\tt mosb@robots.ox.ac.uk}
 }
 
 \maketitle
@@ -148,16 +144,20 @@
 \noindent{}We define kernels for mixed continuous/discrete spaces and conditional spaces and show that they are positive definite.
 \end{abstract}
 
-We aim to do inference about some function $g$ with domain (input space) $\sX$. $\sX = \prod_{i=1}^D \sX_i$ is a $D$-dimensional input space, where each individual dimension is either bounded real or categorical, that is, $\sX_i$ is either $[L_i, U_i] \subset \reals$ (with lower and upper bounds $L_i$ and $U_i$, respectively) or $\{v_{i,1}, \dots, v_{i,m_i}\}$. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Associated with $\sX$, there is a DAG structure $\sD$, whose vertices are the dimensions $\{1,\,\ldots,\,D\}$. $\sX$ will be restricted by $\sD$: if vertex $i$ has children under $\sD$, $\sX_i$ must be categorical. $\sD$ is also used to specify whether each input is \emph{active}: that is, relevant to inference about $g$. In particular, we assume each input dimension is only active under some instantiations of its ancestor dimensions in $\sD$. More precisely, we define $D$ functions $\delta_i\colon \sX\mapsto \mathcal{B}$, for $i \in \{1,\,\ldots,\,D\}$, and where $\mathcal{B} = \{\text{true}, \text{false}\}$. We take 
+We aim to do inference about some function $g$ with domain (input space) $\sX$. $\sX = \prod_{i=1}^D \sX_i$ is a $D$-dimensional input space, where each individual dimension is either bounded real or categorical, that is, $\sX_i$ is either $[l_i, u_i] \subset \reals$ (with lower and upper bounds $l_i$ and $u_i$, respectively) or $\{v_{i,1}, \dots, v_{i,m_i}\}$. 
+
+Associated with $\sX$, there is a DAG structure $\sD$, whose vertices are the dimensions $\{1,\,\ldots,\,D\}$. $\sX$ will be restricted by $\sD$: if vertex $i$ has children under $\sD$, $\sX_i$ must be categorical. $\sD$ is also used to specify when each input is \emph{active} (that is, relevant to inference about $g$). In particular, we assume each input dimension is only active under some instantiations of its ancestor dimensions in $\sD$. More precisely, we define $D$ functions $\delta_i\colon \sX\to \mathcal{B}$, for $i \in \{1,\,\ldots,\,D\}$, and where $\mathcal{B} = \{\text{true}, \text{false}\}$. We take 
 \begin{equation}
  \delta_i(\v{x}) = \delta_i\bigl(\v{x}(\text{anc}_i)\bigr),
 \end{equation}
 where $\text{anc}_i$ are the ancestor vertices of $i$ in $\sD$, such that $\delta_i(\v{x})$ is true only for appropriate values of those entries of $\v{x}$ corresponding to ancestors of $i$ in $\sD$. We say $i$ is active for $\v{x}$ iff $\delta_i(\v{x})$.
 
 %if all its parent dimensions $P_i$ are active themselves and each parent $p\in P_i$ takes one of the values in the finite set $V_{i,p}$. 
-Our aim is to specify a kernel for $g$, \emph{i.e.}, a positive semi-definite function  $k\colon \sX \times \sX \mapsto \reals$. We will first specify an individual kernel for each input dimension, \emph{i.e.}, a positive semi-definite function $k_i\colon \sX \times \sX \mapsto \reals$. $k$ can then be taken as either a sum,
+Our aim is to specify a kernel for $\sX$, \emph{i.e.}, a positive semi-definite function  $k\colon \sX \times \sX \to \reals$. We will first specify an individual kernel for each input dimension, \emph{i.e.}, a positive semi-definite function $k_i\colon \sX \times \sX \to \reals$. $k$ can then be taken as either a sum,
 \begin{equation}
  k(\v{x}, \v{x}') = \sum_{i=1}^D k_i(\v{x},\v{x}'),
 \end{equation}
@@ -165,45 +165,59 @@ product,
 \begin{equation}
  k(\v{x}, \v{x}') = \prod_{i=1}^D k_i(\v{x},\v{x}'),
 \end{equation}
-or any other permitted combination, of these individual kernels. Note that each individual kernel will depend on an  input vector $\v{x}$ only through dependence on both $x_i$ and $\delta_i(\v{x})$,
+or any other permitted combination, of these individual kernels. Note that each individual kernel $k_i$ will depend on an input vector $\v{x}$ only through dependence on $x_i$ and $\delta_i(\v{x})$,
 \begin{equation}
   k_i(\v{x},\v{x}') = \tilde{k}_i\bigl(x_i,\delta_i(\v{x}),x_i', \delta_i(\v{x}') \bigr).
 \end{equation}
 That is, $x_j$ for $j\neq i$ will influence $k_i(\v{x},\v{x}')$ only if $j \in \text{anc}_i$, and only by affecting whether $i$ is active.
 
-Below we will construct pseudometrics $d{_i}\colon \sX \times \sX \mapsto \reals^+$: that is, $d_i$ satisfies the requirements of a metric aside from the identity of indiscernibles. As for $k_i$, these pseudometrics will depend on an input vector $\v{x}$ only through dependence on both $x_i$ and $\delta_i(\v{x})$. $d{_i}(\v{x}, \v{x}')$ will be designed to provide an intuitive measure of how different $g(\v{x})$ is from $g(\v{x}')$. For each $i$, we will then construct a (pseudo-)isometry $f_i$ from
+Below we will construct pseudometrics $d{_i}\colon \sX \times \sX \to \reals^+$: that is, $d_i$ satisfies the requirements of a metric aside from the identity of indiscernibles. As for $k_i$, these pseudometrics will depend on an input vector $\v{x}$ only through dependence on both $x_i$ and $\delta_i(\v{x})$. $d{_i}(\v{x}, \v{x}')$ will be designed to provide an intuitive measure of how different $g(\v{x})$ is from $g(\v{x}')$. 
+For each $i$, we will then construct a (pseudo-)isometry $f_i$ from
 $\sX$ 
 to a Euclidean space ($\reals^2$ for bounded real parameters, and $\reals^m$ for categorical-valued parameters with $m$ choices). That is, denoting the Euclidean metric on the appropriate space as $d{_E}$, $f_i$ will be such that
 \begin{equation}
+\label{eqn:d_i}
  d{_i}(\v{x},\v{x}')
 =
 d_{\text{E}}(f{_i}\bigl(\v{x}), f{_i}(\v{x}')\bigr)
 \end{equation}
-for all $\v{x}, \v{x}' \in \sX$. We can then use our transformed inputs, $f_i(\v{x})$, within any standard Euclidean kernel $\kappa$. We'll make this explicit in the following Proposition. 
+for all $\v{x}, \v{x}' \in \sX$. We can then use our transformed inputs, $f_i(\v{x})$, within any standard Euclidean kernel $\kappa$. We'll make this explicit in Proposition \ref{prop:cont_psd_proof}. 
 
-Define $\kappa\colon \reals^+ \to \reals$ as a semi-positive definite function over Euclidean space. By the latter, we mean that $K \in \reals^{N\times N}$, defined by 
+\note{FH: I tried to make things a bit more formal here by using explicit definitions and referring back to them later. We might want to go one step further and do something similar for isometries/pseudometrics, once it is clear that we actually need these concepts in the formal proofs. What do you think?}
+\note{MO: sure}.
+\begin{define}
+\label{def:psd_fun_euclid}
+A function $\kappa\colon \reals^+ \to \reals$ is \emph{a positive semi-definite covariance function over Euclidean space} if $K \in \reals^{N\times N}$, defined by 
 \begin{equation}
- K_{m, n} = \kappa\bigl(d_{\text{E}}(\v{y}_m, \v{y}_n)\bigr),\quad \text{for }
+\nonumber K_{m, n} = \kappa\bigl(d_{\text{E}}(\v{y}_m, \v{y}_n)\bigr),\quad \text{for }
 \v{y}_m, \v{y}_n \in \reals^P,\quad m, n = 1, \ldots, N, 
 \end{equation}
-is positive semi-definite. A popular example of such a $\kappa$ is the exponentiated quadratic, for which $\kappa(\delta) = \sigma^2 \exp(-\frac{1}{2} \frac{\delta^2}{\lambda^2})$; another popular choice is the rational quadratic, for which $\kappa(\delta) = \sigma^2 (1+\frac{1}{2\alpha} \frac{\delta^2}{\lambda^2})^{-\alpha}$.
+is positive semi-definite for any $\v{y}_1, \dots, \v{y}_N \in \reals^P$. 
+\end{define}
+
+A popular example of such a $\kappa$ is the exponentiated quadratic, for which $\kappa(\delta) = \sigma^2 \exp(-\frac{1}{2} \frac{\delta^2}{\lambda^2})$; another popular choice is the rational quadratic, for which $\kappa(\delta) = \sigma^2 (1+\frac{1}{2\alpha} \frac{\delta^2}{\lambda^2})^{-\alpha}$.
 
 
 \begin{prop}
-  $\kappa\bigl(d{_i}(\cdot,\cdot)\bigr)$ is a positive semi-definite covariance function over input space $\sX$. 
+Let $\kappa$ be a positive semi-definite covariance function over Euclidean space and let $d_i$ satisfy Equation \ref{eqn:d_i}. Then, 
+$k_i\colon \sX \times \sX\to \reals^+$, defined by 
+%\[k_i(\v{x},\v{x}') = \kappa( d_{\text{E}}(f_i(\v{x}), f_i(\v{x}')) )\]
+\[k_i(\v{x},\v{x}') = \kappa\bigl( d_i(\v{x}, \v{x}') \bigr)\]
+is a positive semi-definite covariance function over input space $\sX$. 
 \label{prop:cont_psd_proof}
 \begin{proof}
-We require that $K \in \reals^{N\times N}$ defined by
+We need to show that for any $\v{x}_1, \dots, \v{x}_N \in \sX$, $K \in \reals^{N\times N}$ defined by
 \begin{align*}
  K_{m, n} & = \kappa\bigl(d{_i}(\v{x}_m,\v{x}_n)\bigr)
 ,\quad \text{for }
 \v{x}_m, \v{x}_n \in \sX,\quad m, n = 1, \ldots, N, 
 \\
-\intertext{is positive semi-definite. Now, from above,}
-K_{m, n} & = \kappa\Bigl(d_{\text{E}}(f{_i}\bigl(\v{x}_m), f{_i}(\v{x}_n)\bigr)\Bigr) \\
-& = \kappa\bigl(d_{\text{E}}(\v{y}_m, \v{y}_n)\bigr)
+\intertext{is positive semi-definite. Now, by the definition of $d_i$,}
+K_{m, n} & = \kappa\Bigl(d_{\text{E}}(f{_i}\bigl(\v{x}_m), f{_i}(\v{x}_n)\bigr)\Bigr) 
+= \kappa\bigl(d_{\text{E}}(\v{y}_m, \v{y}_n)\bigr)
 \end{align*}
-where $\v{y}_m = f{_i}\bigl(\v{x}_m)$ and similar for $\v{x}_m$. Then, by assumption that $\kappa$ is a positive semi-definite function over Euclidean space, $K$ is positive semi-definite. 
+where $\v{y}_m = f{_i}\bigl(\v{x}_m)$ and $\v{y}_n = f{_i}\bigl(\v{x}_n)$ are elements of $\reals^P$.
+Then, by assumption that $\kappa$ is a positive semi-definite covariance function over Euclidean space, $K$ is positive semi-definite. 
 \end{proof}
 \end{prop}
 
@@ -214,16 +228,32 @@ We'll now define pseudometrics $d_i$ and associated isometries $f_i$ for both th
 \section{Bounded Real Dimensions}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Let's first define $f\br_i$ and $d\br_i$ for the case that the input $\sX_i=[L_i, U_i]$ is bounded real. We first define a `difference' function $d\br_i$ on $\sX$,
+Let's first define the `difference' function $d_i$ on $\sX$ and the isometry $f_i$ from $(\sX, d_i)$ to $\reals^2,d_\text{E}$ for the case that the input $\sX_i=[l_i, u_i]$ is bounded real; to emphasize that we're in this real case, we 
+explicitly denote these functions as $d\br_i$ and $f\br_i$. We first define $d\br_i$, recalling that $\delta_i(\v{x})$ is true iff dimension $i$ is active given the instantiation of $i$'s ancestors in $\v{x}$.
 
 \begin{eqnarray}
 \nonumber{}d\br_i(\v{x}, \v{x}') & = & \left\{\begin{array}{ll}
 \nonumber{} 0 & \textrm{ if } \delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{false}\\
 \nonumber{} w_i & \textrm{ if } \delta_i(\v{x}) \neq \delta_i(\v{x}')\\
-\nonumber{} w_i \sqrt{2} \sqrt{1 - \cos(\pi \frac{x_i-x_i'}{U_i-L_i})} & \textrm{ if } \delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{true}. \end{array}\right.
+\nonumber{} w_i \sqrt{2} \sqrt{1 - \cos(\pi \frac{x_i-x_i'}{u_i-l_i})} & \textrm{ if } \delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{true}. \end{array}\right.
 \end{eqnarray}
 
-As desired, if $i$ is inactive for both $\v{x}$ and $\v{x}'$, $d\br_i$ specifies that $g(\v{x})$ and $g(\v{x}')$ should not differ owing to differences between $x_i$ and $x_i'$. If $i$ is inactive for exactly one of $\v{x}$ and $\v{x}'$, $g(\v{x})$ and $g(\v{x}')$ are as different as is possible due to $x_i$ and $x_i'$. If $i$ is active for both $\v{x}$ and $\v{x}'$, the difference between $g(\v{x})$ and $g(\v{x}')$ due to $x_i$ and $x_i'$ increases monotonically with increasing $\left|x_i-x_i'\right|$.
+As desired, if $i$ is inactive for both $\v{x}$ and $\v{x}'$, $d\br_i$ specifies that $g(\v{x})$ and $g(\v{x}')$ should not differ owing to differences between $x_i$ and $x_i'$. 
+\note{FH: Unfortunately, intuitively this isn't quite as nice as you wrote since the second case is not the one maximizing difference (it's up to $\sqrt{2}$ smaller than the third case).}
+\note{MO: Ah, you're right: I forgot that we'd left it like that. I think we could define the third case as $\frac{w_i}{ \sqrt{2}} \sqrt{1 - \cos(\pi \frac{x_i-x_i'}{u_i-l_i})}$, and replace the $w_i$ in the isometry definition with $\frac{w_i}{2}$, if we wanted to and everything would still work. What would make more sense for the application, do you think?}
+If $i$ is inactive for exactly one of $\v{x}$ and $\v{x}'$, $g(\v{x})$ and $g(\v{x}')$ are almost as different as is possible with respect to dimension $i$, 
+regardless of the actual values of $x_i$ and $x_i'$.\footnote{Note that $\v{x}$ and $\v{x}'$ must differ in at least one ancestor dimension of $i$ in order for $\delta_i(\v{x}) \neq \delta_i(\v{x}')$ to hold, such that differences in the activity of dimension $i$ are penalized both in distance $d_i$ and in the distance for the ancestor dimension causing the difference in $i$'s activity.\note{FH: note: if we wanted to, we could probably get a condition for the joint overall kernel that the distance will always be larger if configurations differ on a higher level in the dimensionality DAG, by multiplying $w_i$ by the weights $w_j \in [0,1]$ of all of $i$'s ancestors $j$ (because at least one ancestor has to differ). We'd further have to divide $w_i$ by the maximal number of descendants a dimension has, in order to ensure that a difference at a higher level counts more than all the differences at the descendant-dimensions combined. But of course for this we wouldn't be able to do the proof of PSD-ness for each 
+dimension by itself, so things would get a lot more hairy, and at least at this point there is no need for that.}
+\note{MO: actually, we should absolutely be able to do that, without any problem. I don't think it'll get hairy. It's just a matter of replacing $w_i$ with a slightly different constant, dependent on $i$, but independent of $\v{x}$. Let's do it!}
+}
+%
+%FH: reworded as this unfortunately is not quite true due to the sqrt(2).
+%If $i$ is inactive for exactly one of $\v{x}$ and $\v{x}'$, $g(\v{x})$ and $g(\v{x}')$ are as different as is possible due to $x_i$ and $x_i'$. 
+%
+Finally, if $i$ is active for both $\v{x}$ and $\v{x}'$, the difference between $g(\v{x})$ and $g(\v{x}')$ due to $x_i$ and $x_i'$ increases monotonically with increasing $\left|x_i-x_i'\right|$.
+
+\note{FH: I don't fully understand why we actually need to show that $d\br_i$ is a (pseudo)metric. I understand that you might argue that isometries are only defined between metric spaces, but we don't even need the fact that $f_i$ is an isometry, other than by using the property $d{_i}(\v{x},\v{x}') = d_{\text{E}}(f{_i}\bigl(\v{x}), f{_i}(\v{x}')\bigr)$ from Equation \ref{eqn:d_i}, do we? I believe we could just drop Proposition \ref{prop:dbr_pseudometric}, reword Proposition \ref{prop:f_d_cont_isometric} to just say $d_{\text{E}}\bigl(f_i\br(\v{x}),f_i\br(\v{x}')\bigr) = d\br_i(\v{x},\v{x}')$, and then aren't we done? (same for the categorical case)}
+\note{MO: you're absolutely correct, for our purposes we can do exactly as you say. I just thought it might be nice to prove that $d_i$ was a pseudometric and that $f_i$ was a (pseudo-)isometry; perhaps someone else might want to use those properties}.
 
 \begin{prop}
   $d\br_i$ is a pseudometric on $\sX$. \label{prop:dbr_pseudometric}
@@ -238,11 +268,11 @@ d\br_i(\v{x},\v{x}'') + d\br_i(\v{x}',\v{x}'') = d\br_i(\v{x},\v{x}'')  + w_i
 \end{align}
 Hence $d\br_i(\v{x},\v{x}'') + d\br_i(\v{x}',\v{x}'') \geq w_i = d\br_i(\v{x},\v{x}')$ by non-negativity.
 
-~\\\noindent{}{Case 3}: $\delta_i(\v{x}) = \delta_i(\v{x}')=\textrm{true}$, such that  $d\br_i(\v{x},\v{x}') = w_i \sqrt{2} \sqrt{1 - \cos(\pi \frac{x_i-x_i'}{U_i-L_i})}$.  If  $\delta_i(\v{x}'') = \text{false}$,
+~\\\noindent{}{Case 3}: $\delta_i(\v{x}) = \delta_i(\v{x}')=\textrm{true}$, such that  $d\br_i(\v{x},\v{x}') = w_i \sqrt{2} \sqrt{1 - \cos(\pi \frac{x_i-x_i'}{u_i-l_i})}$.  If  $\delta_i(\v{x}'') = \text{false}$,
 \begin{align}
-d\br_i(\v{x},\v{x}'') + d\br_i(\v{x}',\v{x}'') = 2 w_i \geq w_i \sqrt{2} \sqrt{1 - \cos(\pi \frac{x_i-x_i'}{U_i-L_i})} = d\br_i(\v{x},\v{x}').
+d\br_i(\v{x},\v{x}'') + d\br_i(\v{x}',\v{x}'') = 2 w_i \geq w_i \sqrt{2} \sqrt{1 - \cos(\pi \frac{x_i-x_i'}{u_i-l_i})} = d\br_i(\v{x},\v{x}').
 \end{align} 
-If  $\delta_i(\v{x}'') = \text{true}$, consider the worst possible case in which, without loss of generality, $x_i=L_i$ and $x'_i=U_i$, such that $d\br_i(\v{x},\v{x}')=2 w_i^2$.  We define the abbreviation $\beta'' = \frac{x''_i-L_i}{U_i-L_i}$, giving
+If  $\delta_i(\v{x}'') = \text{true}$, consider the worst possible case in which, without loss of generality, $x_i=l_i$ and $x'_i=u_i$, such that $d\br_i(\v{x},\v{x}')=2 w_i^2$.  We define the abbreviation $\beta'' = \frac{x''_i-l_i}{u_i-l_i}$, giving
 \begin{align}
 \bigl(d\br_i(\v{x},\v{x}'') + d\br_i(\v{x}',\v{x}'')\bigr)^2
 & = 2w_i^2 \Bigl(\sqrt{1 - \cos (\pi \beta'')} + \sqrt{1 - \cos \bigl(\pi (1-\beta'')\bigr)}\Bigr)^2\nonumber\\
@@ -262,14 +292,14 @@ Now we define an isometric embedding $f_i\br$ of $(\sX, d\br_i)$ into $(\reals^{
 \begin{eqnarray}
 \nonumber{}f_i\br(\v{x}) & = & \left\{\begin{array}{ll}
 [0,0]^\transpose & \textrm{ if } \delta_i(\v{x}) = \textrm{ false }\\
-\nonumber{} w_i [\sin{\pi\frac{x_i}{U_i-L_i}}, \cos{\pi\frac{x_i}{U_i-L_i}}]^\transpose & \textrm{ otherwise.}\end{array}\right..
+\nonumber{} w_i [\sin{\pi\frac{x_i}{u_i-l_i}}, \cos{\pi\frac{x_i}{u_i-l_i}}]^\transpose & \textrm{ otherwise.}\end{array}\right..
 \end{eqnarray}
 
 \begin{prop}$f_i\br$ is an isometry from $(\sX, d\br_i)$ to $(\reals^2, d_{{\text{E}}})$.
 \label{prop:f_d_cont_isometric}
 \begin{proof}
-Consider two inputs $\v{x},\v{x}' \in \sX$. We need to show that $d\br_i(\v{x},\v{x}') = d_{\text{E}}\bigl(f_i\br(\v{x}),f_i\br(\v{x}')\bigr)$.
-We use the abbreviation $\alpha = \pi\frac{x_i}{U_i-L_i}$ and $\alpha' = \pi\frac{x'_i}{U_i-L_i}$ and consider the following three possible cases of dimension $i$ being active or inactive in $\v{x}$ and $\v{x}'$.
+Consider two inputs $\v{x},\v{x}' \in \sX$. We need to show that $d_{\text{E}}\bigl(f_i\br(\v{x}),f_i\br(\v{x}')\bigr) = d\br_i(\v{x},\v{x}')$.
+We use the abbreviation $\alpha = \pi\frac{x_i}{u_i-l_i}$ and $\alpha' = \pi\frac{x'_i}{u_i-l_i}$ and consider the following three possible cases of dimension $i$ being active or inactive in $\v{x}$ and $\v{x}'$.
 
 ~\\\noindent{}{Case 1}: $\delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{false}$.
 In this case, we trivially have 
@@ -286,7 +316,7 @@ and symmetrically for $d_{\text{E}}([0,0]^\transpose, [\sin{\alpha}, \cos{\alpha
 \nonumber{}& = & w_i \sqrt{\sin^2{\alpha} -2 \sin{\alpha}\sin{\alpha'} + \sin^2{\alpha'}  + \cos^2{\alpha} -2 \cos{\alpha}\cos{\alpha'} + \cos^2{\alpha'} }\\
 \nonumber{}& = & w_i \sqrt{(\sin^2{\alpha}+\cos^2{\alpha})   +  (\sin^2{\alpha'}+\cos^2{\alpha'})   -2 (\sin{\alpha}\sin{\alpha'} + \cos{\alpha}\cos{\alpha'})}\nonumber\\
 & = & w_i \sqrt{ 1+1-2 \cos(\alpha-\alpha')}\nonumber\\
-& = & w_i \sqrt{2} \sqrt{1 - \cos(\pi \frac{x_i-x_i'}{U_i-L_i})} = d\br_i(\v{x}, \v{x}'),\label{eqn:simplified}
+& = & w_i \sqrt{2} \sqrt{1 - \cos(\pi \frac{x_i-x_i'}{u_i-l_i})} = d\br_i(\v{x}, \v{x}'),\label{eqn:simplified}
 \end{eqnarray}
 where (\ref{eqn:simplified}) follows from the previous line by using the identity 
 \[\cos{(a-b)} = \cos{a}\cos{b} + \sin{a}\sin{b}.\]
@@ -333,7 +363,7 @@ Secondly,
 \end{eqnarray}
 \noindent{}where $\v{e_j} \in \reals^{m_i}$ is zero in all dimensions except $j$, where it it $1$.
 
-\begin{prop}Embedding $f\cat_i$ is an isometric embedding of $(\sX, d\cat_i)$ into $(\reals^{m_i},d_{\text{E}}^{m_i})$.
+\begin{prop}$f\cat_i$ is an isometry from $(\sX, d\cat_i)$ to $(\reals^{m_i},d_{\text{E}}^{m_i})$.
 \label{prop:f_d_cat_isometric}
 \begin{proof}
 Consider two inputs $\v{x},\v{x}' \in \sX$. As in the proof of Proposition \ref{prop:f_d_cont_isometric}, we need to show that $d\cat_i(\v{x},\v{x}') = d_{\text{E}}^{m_i}(f\cat_i(\v{x}),f\cat_i(\v{x}'))$ and consider the following cases.
