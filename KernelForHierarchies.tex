@@ -348,14 +348,15 @@ In this case, we trivially have
 d_{\text{E}}^{m_i}\biggl(\omega_i\,\frac{\v{e_j}+(1-\rho)\sum_{l\neq j} \v{e_l}}
 {\|\v{e_j}+(1-\rho)\sum_{l\neq j} \v{e_l}\|}, \v{0}\biggr) 
 = \omega_i = d_i(\v{x},\v{x}'),\]
-and symmetrically for $d_{\text{E}}(\v{0}, \omega_i\,\v{e_j})$.
+and symmetrically for $d_{\text{E}}\biggl(\v{0}, \omega_i\,\frac{\v{e_j}+(1-\rho)\sum_{l\neq j} \v{e_l}}
+{\|\v{e_j}+(1-\rho)\sum_{l\neq j} \v{e_l}\|}\biggr)$.
 
 ~\\\noindent{}{Case 3}: $\delta_i(\v{x}) = \delta_i(\v{x}') = \textrm{true}$. 
 If $x_i=x_i'=v_{i,j}$, we have 
 \begin{eqnarray}
 \nonumber{}d_{\text{E}}^{m_i}(f\cat_i(\v{x}),f\cat_i(\v{x}')) & = & d_{\text{E}}^{m_i}\bigl(
 f\cat_i(\v{x}),f\cat_i(\v{x})
-\bigr) = 0 = d\cat_i(\v{x}, \v{x}')
+\bigr) = 0 = d\cat_i(\v{x}, \v{x}').
 \end{eqnarray}
 
 \noindent{}If $x_i=v_{i,j} \neq v_{i,j'} = x_i'=$, we have 
@@ -371,7 +372,7 @@ d_{\text{E}}^{m_i}\biggl(
 {1+(m_i-1)(1-\rho)^2} \nonumber\\
 & = \omega_i \frac{\sqrt{2} \rho}
 {1+(m_i-1)(1-\rho)^2} \nonumber\\
-& = d\cat_i(\v{x}, \v{x}')
+& = d\cat_i(\v{x}, \v{x}').
 \end{align}
 \end{proof}
 \end{prop}
