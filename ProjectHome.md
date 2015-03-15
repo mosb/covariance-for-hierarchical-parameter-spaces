@@ -1,0 +1,3 @@
+Consider a $D$-dimensional input space $\mathcal{X}$ with an associated DAG structure $\mathcal{D}$ over the dimensions $1,\dots,D$, where each input dimension is only active under some instantiations of its ancestor dimensions in $\mathcal{D}$.
+
+We specify a kernel for $\mathcal{X}$ as a product over individual kernels for each dimension $i$. Each of these individual kernels is specified using an isometric embedding into a Euclidean space ($\reals<sup>2$ for continuous-valued parameters, and $\reals</sup>m$ for categorical-valued parameters with $m$ choices). We restrict dimensions that are parents in $\mathcal{D}$ to be categorical-valued. Leaf dimensions in $\mathcal{D}$ can be continuous-valued or categorical-valued.
